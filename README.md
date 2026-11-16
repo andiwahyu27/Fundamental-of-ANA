@@ -735,6 +735,109 @@ Setiap IP statis sebaiknya dicatat:
 
 > Jangan memberikan alamat network, broadcast, atau alamat yang sudah digunakan perangkat lain kepada host baru.
 
+### 9. Membuat Dokumentasi Pengalamatan Jaringan
+
+Dokumentasi pengalamatan jaringan adalah catatan terstruktur mengenai seluruh IP address, subnet, perangkat, dan aturan konfigurasi jaringan.
+
+Dokumen ini sebaiknya menjadi **single source of truth**, yaitu sumber informasi utama yang digunakan ketika melakukan pemeliharaan, troubleshooting, audit, atau penambahan perangkat.
+
+#### Komponen dokumentasi
+
+Dokumentasi jaringan sebaiknya memuat:
+
+1. **Informasi dasar**
+   - judul dokumentasi;
+   - nama proyek atau organisasi;
+   - tanggal pembuatan;
+   - versi dokumen;
+   - nama penyusun atau penanggung jawab.
+
+2. **Diagram topologi**
+   - koneksi internet;
+   - router atau firewall;
+   - switch;
+   - server;
+   - access point;
+   - VLAN atau subnet;
+   - lokasi perangkat.
+
+3. **Tabel ringkasan subnet**
+   - network address dan prefix;
+   - tujuan penggunaan;
+   - rentang host;
+   - gateway;
+   - broadcast address;
+   - VLAN jika ada.
+
+4. **Tabel alokasi IP statis**
+   - IP address;
+   - hostname;
+   - MAC address;
+   - jenis perangkat;
+   - lokasi;
+   - keterangan.
+
+5. **Informasi DHCP**
+   - alamat server DHCP;
+   - DHCP pool;
+   - lease time;
+   - gateway;
+   - DNS;
+   - daftar reservation jika digunakan.
+
+6. **Change log**
+   - tanggal perubahan;
+   - uraian perubahan;
+   - perangkat atau subnet yang terdampak;
+   - pelaksana;
+   - pihak yang menyetujui.
+
+#### Contoh ringkasan subnet
+
+| ID Subnet | Tujuan | Rentang host | Gateway | Broadcast | VLAN |
+|---|---|---|---|---|---:|
+| 192.168.10.0/24 | Jaringan pegawai | 192.168.10.1–192.168.10.254 | 192.168.10.1 | 192.168.10.255 | 10 |
+| 192.168.20.0/24 | Jaringan tamu | 192.168.20.1–192.168.20.254 | 192.168.20.1 | 192.168.20.255 | 20 |
+
+#### Contoh alokasi IP statis
+
+| IP address | Hostname | MAC address | Perangkat | Lokasi | Keterangan |
+|---|---|---|---|---|---|
+| 192.168.10.1 | R1 | AA:BB:CC:00:00:01 | Router | Ruang server | Gateway utama |
+| 192.168.10.2 | SW-LT1 | AA:BB:CC:00:00:02 | Switch | Lantai 1 | Switch akses |
+| 192.168.10.10 | SRV-FILE | AA:BB:CC:00:00:10 | Server | Ruang server | Penyimpanan file |
+| 192.168.10.20 | PRN-LT1 | AA:BB:CC:00:00:20 | Printer | Lantai 1 | Printer jaringan |
+
+#### Contoh informasi DHCP
+
+```text
+Server DHCP : 192.168.10.1
+DHCP pool   : 192.168.10.100–192.168.10.200
+Lease time  : 24 jam
+Gateway     : 192.168.10.1
+DNS primer  : 192.168.10.1
+DNS sekunder: 8.8.8.8
+```
+
+Rentang IP statis dan DHCP perlu dipisahkan agar server DHCP tidak membagikan alamat yang sudah digunakan secara manual.
+
+#### Contoh change log
+
+| Tanggal | Perubahan | Pelaksana | Persetujuan |
+|---|---|---|---|
+| 2026-11-16 | Menambahkan printer jaringan dengan IP 192.168.10.21 | Tim jaringan | Koordinator TI |
+| 2026-11-17 | Mengubah DHCP pool menjadi 192.168.10.100–192.168.10.200 | Tim jaringan | Koordinator TI |
+
+#### Praktik dokumentasi yang baik
+
+- Gunakan format penamaan perangkat yang konsisten.
+- Catat tanggal dan versi setiap perubahan.
+- Jangan menghapus riwayat perubahan.
+- Simpan diagram dan tabel pada lokasi yang dapat diakses tim terkait.
+- Perbarui dokumentasi segera setelah konfigurasi berubah.
+- Lindungi informasi sensitif, seperti kredensial, secret key, dan konfigurasi keamanan.
+- Lakukan pencadangan dokumen secara berkala.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
