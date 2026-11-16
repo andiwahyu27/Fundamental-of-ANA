@@ -1384,6 +1384,137 @@ Setelah AP dipasang, lakukan verifikasi:
 
 Pemasangan selesai bukan ketika lampu AP menyala, melainkan ketika cakupan, kapasitas, keamanan, dan konektivitasnya telah diuji sesuai kebutuhan.
 
+### 15. Mengonfigurasi Perangkat Nirkabel agar Terhubung ke Jaringan
+
+Setelah perangkat dipasang secara fisik, perangkat perlu dikonfigurasi agar dapat berkomunikasi dengan router, switch, server, dan perangkat pengguna. Konfigurasi harus mengikuti desain IP address, VLAN, keamanan, dan kebutuhan layanan jaringan.
+
+#### 1. Akses antarmuka konfigurasi
+
+Langkah umum:
+
+1. Hubungkan komputer ke AP menggunakan kabel Ethernet atau jaringan konfigurasi awal.
+2. Cari alamat IP perangkat melalui label, manual, DHCP lease pada router, atau aplikasi vendor.
+3. Buka alamat IP tersebut melalui browser.
+4. Masuk menggunakan akun administrator.
+5. Segera ganti username atau password default.
+6. Ubah alamat manajemen AP sesuai skema jaringan dan catat pada dokumentasi.
+
+Alamat `192.168.1.1` sering digunakan sebagai contoh alamat default, tetapi alamat sebenarnya bergantung pada produsen. Jangan mengasumsikan semua perangkat menggunakan alamat tersebut.
+
+#### 2. Menentukan mode perangkat
+
+| Mode | Fungsi | Kapan digunakan |
+|---|---|---|
+| Access Point/Bridge | Menyediakan Wi-Fi dan meneruskan koneksi ke jaringan utama | Jika router utama sudah menyediakan DHCP dan NAT |
+| Router | Membuat jaringan baru dan melakukan routing/NAT | Jika perangkat menjadi gateway suatu segmen |
+| Repeater/Mesh | Memperluas jaringan melalui koneksi nirkabel | Jika kabel Ethernet sulit ditarik, dengan konsekuensi kapasitas tertentu |
+
+Pada jaringan kantor, mode AP/bridge biasanya dipilih jika DHCP, NAT, firewall, dan routing sudah ditangani oleh router atau firewall utama. Hindari mengaktifkan beberapa server DHCP pada satu segmen tanpa desain yang jelas.
+
+#### 3. Mengatur SSID
+
+SSID adalah nama jaringan nirkabel yang terlihat oleh pengguna. Praktik yang disarankan:
+
+- gunakan nama yang mudah dikenali;
+- hindari nama yang memuat alamat, password, atau informasi pribadi;
+- bedakan SSID pegawai dan tamu jika kebijakan aksesnya berbeda;
+- gunakan SSID yang konsisten pada AP yang melayani jaringan yang sama;
+- matikan SSID yang tidak diperlukan.
+
+| SSID | Fungsi | VLAN | Akses |
+|---|---|---:|---|
+| Kantor-Internal | Pegawai | 10 | Internet dan layanan internal |
+| Kantor-Tamu | Tamu | 20 | Internet saja |
+| Kantor-IoT | Perangkat IoT | 30 | Hanya layanan yang diperlukan |
+
+SSID yang berbeda sebaiknya dipetakan ke VLAN dan aturan firewall yang sesuai. Mengganti nama SSID saja tidak cukup untuk memisahkan jaringan.
+
+#### 4. Mengatur keamanan Wi-Fi
+
+- pilih WPA3 jika seluruh perangkat klien mendukungnya;
+- gunakan WPA2-AES sebagai alternatif kompatibilitas;
+- gunakan password panjang, unik, dan tidak sama dengan password administrator;
+- aktifkan guest network untuk tamu;
+- batasi akses antar-VLAN melalui firewall;
+- gunakan autentikasi terpusat seperti 802.1X/RADIUS jika diperlukan;
+- perbarui firmware dan nonaktifkan administrasi dari internet jika tidak diperlukan.
+
+#### 5. Mengatur frekuensi dan kanal
+
+Konfigurasikan pita 2,4 GHz, 5 GHz, atau keduanya sesuai kebutuhan.
+
+- gunakan kanal yang tidak saling bertabrakan dengan AP di sekitar;
+- pada 2,4 GHz, gunakan perencanaan kanal yang tidak tumpang tindih sesuai regulasi dan kondisi lokal;
+- gunakan lebar kanal yang tidak terlalu besar jika lingkungan padat;
+- pada 5 GHz, perhatikan kanal DFS dan karakteristik jangkauan yang berbeda;
+- uji kanal menggunakan site survey atau alat analisis Wi-Fi.
+
+Lebar kanal yang lebih besar dapat meningkatkan kecepatan teoritis, tetapi juga dapat meningkatkan penggunaan spektrum dan interferensi.
+
+#### 6. Mengatur DHCP dan alamat manajemen
+
+Jika router utama menyediakan DHCP, AP dapat dikonfigurasi sebagai DHCP client. Alamat manajemen sebaiknya mudah ditemukan, misalnya melalui DHCP reservation.
+
+Alternatifnya adalah memberi IP manajemen statis:
+
+```text
+AP-LT1 : 192.168.10.11/24
+Gateway: 192.168.10.1
+DNS    : 192.168.10.1
+VLAN   : 10
+```
+
+Pastikan alamat tidak bertabrakan, berada pada subnet manajemen yang benar, tidak termasuk DHCP pool, serta tercatat dalam dokumentasi.
+
+#### 7. Mengonfigurasi VLAN dan koneksi switch
+
+Jika AP membawa beberapa SSID dengan VLAN berbeda:
+
+- port switch menuju AP biasanya dikonfigurasi sebagai trunk;
+- VLAN yang diperlukan harus diizinkan pada trunk;
+- VLAN native atau untagged harus ditentukan dengan hati-hati;
+- SSID internal dan tamu dipetakan ke VLAN masing-masing;
+- router atau Layer 3 Switch menyediakan gateway dan routing antar-VLAN;
+- firewall membatasi akses antar-segmen.
+
+Jika AP hanya membawa satu jaringan, port dapat menggunakan mode access sesuai desain. Jangan mengubah port menjadi trunk tanpa memahami konfigurasi VLAN di sisi router atau switch.
+
+#### 8. Memperbarui firmware
+
+Sebelum memperbarui firmware:
+
+1. Catat model dan versi perangkat.
+2. Pastikan firmware sesuai model dan wilayah perangkat.
+3. Backup konfigurasi.
+4. Gunakan sumber listrik yang stabil.
+5. Jangan mematikan perangkat selama proses berlangsung.
+6. Periksa kembali konfigurasi setelah reboot.
+
+Firmware sering berisi perbaikan keamanan, stabilitas, dan kompatibilitas.
+
+#### 9. Pengujian setelah konfigurasi
+
+Uji dari beberapa perangkat dan lokasi:
+
+- perangkat dapat melihat dan terhubung ke SSID;
+- autentikasi berhasil;
+- perangkat memperoleh IP dari DHCP;
+- perangkat dapat melakukan ping ke gateway;
+- DNS dapat menerjemahkan nama domain;
+- akses internet berjalan sesuai kebijakan;
+- VLAN tamu tidak dapat mengakses jaringan internal;
+- throughput dan latency sesuai kebutuhan;
+- roaming antar-AP berjalan baik;
+- log dan daftar klien menampilkan informasi yang benar.
+
+Contoh urutan pemeriksaan:
+
+```text
+Klien Wi-Fi → IP address → gateway → DNS → internet
+```
+
+Konfigurasi dinyatakan selesai setelah hasil pengujian dicatat dan konfigurasi akhir dicadangkan.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
