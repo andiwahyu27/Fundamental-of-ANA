@@ -1738,6 +1738,38 @@ Catat setiap penyesuaian:
 
 Jaringan dianggap optimal bukan karena tidak pernah diubah, tetapi karena setiap perubahan dilakukan berdasarkan bukti, diuji kembali, dan terdokumentasi.
 
+### 18. Mengidentifikasi Perangkat Jaringan Sesuai Kebutuhan
+
+Langkah pertama sebelum membeli perangkat adalah menganalisis masalah dan kebutuhan jaringan. Tujuannya bukan membeli perangkat paling mahal, melainkan memilih perangkat yang tepat untuk menutup kesenjangan kinerja (*gap analysis*) pada infrastruktur yang sudah ada.
+
+#### Analisis kesenjangan (*gap analysis*)
+
+Analisis kesenjangan membandingkan kondisi jaringan saat ini dengan kondisi ideal yang dibutuhkan bisnis. Dari perbandingan tersebut, administrator dapat menentukan kekurangan jaringan dan perangkat yang diperlukan untuk mengatasinya.
+
+Contoh:
+
+| Kondisi | Uraian |
+|---|---|
+| Kondisi saat ini | 50 karyawan di lantai 3 berbagi satu AP lama |
+| Kondisi ideal | Setiap karyawan memperoleh koneksi stabil 50 Mbps |
+| Kesenjangan | AP lama tidak mampu menangani 50 pengguna secara bersamaan sehingga koneksi lambat dan terputus |
+| Perangkat yang mungkin diperlukan | AP dengan standar Wi-Fi lebih baru, misalnya Wi-Fi 6, dan/atau switch PoE |
+
+Identifikasi perangkat harus didasarkan pada masalah yang ditemukan, jumlah pengguna, target kinerja, kondisi fisik, dan kebutuhan pengembangan jaringan.
+
+#### Menentukan fungsi kritis perangkat
+
+Setelah jenis perangkat ditentukan, tetapkan fungsi kritis yang wajib dijalankan. Membeli perangkat tanpa mengetahui fungsi utamanya dapat menyebabkan pemborosan dan ketidaksesuaian spesifikasi.
+
+Beberapa fungsi kritis yang perlu dipertimbangkan:
+
+- **Routing dinamis:** router mampu bertukar informasi dengan router lain dan memilih jalur data secara otomatis. Fitur ini penting pada jaringan besar atau jaringan dengan beberapa jalur.
+- **Segmentasi VLAN:** switch mampu membagi jaringan menjadi beberapa segmen logis, misalnya memisahkan lalu lintas Akuntansi dan Tamu. Segmentasi meningkatkan keamanan dan membantu mengelola kinerja jaringan.
+- **Deep Packet Inspection (DPI):** firewall dapat memeriksa isi paket, bukan hanya alamat sumber dan tujuan, untuk mendeteksi virus, aplikasi berisiko, atau konten berbahaya.
+- **Peningkatan throughput backbone:** switch core mampu menangani lonjakan lalu lintas antarserver tanpa menjadi *bottleneck*.
+
+Dengan menetapkan fungsi kritis, administrator memiliki dasar spesifikasi teknis yang jelas untuk memilih model perangkat yang sesuai.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
