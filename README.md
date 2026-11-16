@@ -838,6 +838,143 @@ Rentang IP statis dan DHCP perlu dipisahkan agar server DHCP tidak membagikan al
 - Lindungi informasi sensitif, seperti kredensial, secret key, dan konfigurasi keamanan.
 - Lakukan pencadangan dokumen secara berkala.
 
+### 10. Menetapkan Kebutuhan Detail Perangkat Jaringan
+
+Pemilihan perangkat jaringan harus didasarkan pada kebutuhan pengguna, beban lalu lintas, kondisi lokasi, anggaran, dan rencana pertumbuhan. Perangkat yang dipilih tidak boleh terlalu kecil sehingga cepat penuh, tetapi juga tidak boleh berlebihan sehingga memboroskan anggaran.
+
+Analisis dilakukan dengan membandingkan:
+
+- kebutuhan jaringan saat ini;
+- proyeksi kebutuhan 3–5 tahun mendatang;
+- kapasitas perangkat yang tersedia;
+- kebutuhan kecepatan dan keamanan;
+- kemungkinan perluasan jaringan.
+
+#### 1. Memotret kebutuhan saat ini
+
+Lakukan inventarisasi terhadap:
+
+- jumlah komputer, laptop, printer, server, kamera, dan perangkat IoT;
+- jumlah port switch yang sedang digunakan;
+- jenis aktivitas pengguna;
+- kapasitas internet saat ini;
+- kecepatan switch dan interface jaringan;
+- kondisi kabel dan perangkat lama;
+- area yang sudah dan belum terjangkau Wi-Fi.
+
+Jenis lalu lintas juga perlu diperhatikan. Aktivitas seperti email dan browsing biasanya lebih ringan daripada konferensi video HD, transfer file besar, penggunaan cloud, atau akses server secara bersamaan.
+
+#### 2. Memproyeksikan kebutuhan masa depan
+
+Gunakan prinsip **future proofing**, yaitu memilih perangkat yang masih mampu melayani pertumbuhan jaringan.
+
+Perencanaan dapat dilakukan untuk 3–5 tahun ke depan dengan memperhatikan:
+
+- pertambahan jumlah pegawai;
+- penambahan komputer dan perangkat IoT;
+- peningkatan penggunaan video conference;
+- kebutuhan transfer file yang semakin besar;
+- kemungkinan penambahan ruangan atau lantai.
+
+Sediakan cadangan kapasitas sekitar 20–30%. Cadangan ini dapat diterapkan pada jumlah port, kapasitas bandwidth, kapasitas PoE, serta kemampuan perangkat.
+
+Contoh:
+
+```text
+Perangkat saat ini : 20
+Cadangan 30%       : 6
+Kebutuhan minimum  : 26 perangkat
+```
+
+Walaupun kebutuhan minimum 26 port, switch 24 port tidak cukup. Pilihan yang lebih aman adalah switch 48 port, terutama jika masih harus menyediakan port untuk uplink, access point, printer, kamera, dan perangkat tambahan.
+
+#### 3. Kecepatan perangkat
+
+Periksa apakah kecepatan perangkat lama sesuai dengan kebutuhan.
+
+Contoh:
+
+| Kondisi | Evaluasi |
+|---|---|
+| Switch 100 Mbps | Dapat menjadi bottleneck untuk transfer file dan video |
+| Switch Gigabit 1000 Mbps | Lebih sesuai untuk jaringan kantor modern |
+| Internet 100 Mbps | Perangkat internal sebaiknya tetap mendukung Gigabit |
+| Uplink antar-switch 1 Gbps | Perlu diperiksa terhadap jumlah pengguna dan beban trafik |
+
+Jika komputer baru mendukung Gigabit tetapi switch hanya 100 Mbps, komunikasi tetap dibatasi oleh kemampuan switch.
+
+> Kecepatan internet dan kecepatan jaringan lokal berbeda. Internet 100 Mbps tidak berarti switch internal harus dibatasi 100 Mbps.
+
+#### 4. Jangkauan Wi-Fi
+
+Jika terdapat ruangan yang tidak mendapatkan sinyal Wi-Fi dengan baik, lakukan survei lokasi dan pertimbangkan penambahan Access Point.
+
+Penempatan AP sebaiknya:
+
+- berada di lokasi yang relatif tengah terhadap area layanan;
+- tidak terhalang dinding tebal atau benda logam;
+- tidak ditempatkan terlalu dekat dengan sumber interferensi;
+- mempertimbangkan jumlah pengguna dan kepadatan perangkat;
+- menggunakan beberapa AP dengan perencanaan kanal yang baik jika area luas.
+
+Penambahan AP bukan hanya soal memperbesar daya pancar. Jumlah pengguna, kapasitas AP, posisi pemasangan, interferensi, dan koneksi kabel ke AP juga perlu diperhitungkan.
+
+#### 5. Topologi yang tidak efisien
+
+Masalah jaringan dapat disebabkan oleh susunan perangkat, bukan hanya spesifikasi perangkat.
+
+Contoh masalah:
+
+- semua perangkat terhubung ke satu switch yang sudah penuh;
+- ruangan jauh menggunakan kabel terlalu panjang atau tidak tertata;
+- terlalu banyak perangkat menggunakan satu jalur uplink;
+- tidak ada switch akses di area yang membutuhkan banyak port.
+
+Solusi yang dapat dipertimbangkan:
+
+- menambahkan switch akses di ruangan atau lantai yang jauh;
+- menghubungkan switch tambahan ke switch utama melalui uplink;
+- menata perangkat berdasarkan lantai, divisi, atau VLAN;
+- membuat diagram topologi agar jalur jaringan mudah dipahami.
+
+#### 6. Perangkat keamanan
+
+Jaringan sebaiknya memiliki perangkat dan kebijakan keamanan yang memadai, seperti:
+
+- **firewall** untuk menyaring lalu lintas dan melindungi jaringan dari koneksi yang tidak diizinkan;
+- **router** dengan fitur keamanan dan NAT;
+- **VLAN** untuk memisahkan jaringan pegawai, tamu, server, dan perangkat IoT;
+- **CCTV IP** untuk pemantauan area;
+- **access control** untuk membatasi akses ke perangkat dan ruang jaringan;
+- pencadangan konfigurasi perangkat secara berkala.
+
+Firewall dapat dianalogikan sebagai satpam di gerbang kantor. Firewall memeriksa lalu lintas yang masuk dan keluar berdasarkan aturan yang telah ditetapkan.
+
+#### 7. Cara menyusun rekomendasi perangkat
+
+Gunakan tiga langkah berikut:
+
+1. **Identifikasi kebutuhan**  
+   Tuliskan perangkat yang diperlukan, misalnya switch, router, firewall, access point, kabel, UPS, atau kamera IP.
+
+2. **Tentukan jumlah dan spesifikasi**  
+   Tentukan jumlah unit, jumlah port, kecepatan, kapasitas PoE, dukungan VLAN, uplink, dan fitur keamanan.
+
+3. **Berikan alasan teknis**  
+   Jelaskan hubungan perangkat dengan kebutuhan jaringan.
+
+Contoh rekomendasi:
+
+| Perangkat | Jumlah | Spesifikasi minimum | Alasan |
+|---|---:|---|---|
+| Switch | 1 | 48 port Gigabit, VLAN, 2 uplink | Menampung 26 perangkat dan menyediakan cadangan pertumbuhan |
+| Access Point | 2 | Wi-Fi modern, mendukung banyak pengguna | Memperluas jangkauan lantai 1 dan 2 |
+| Firewall | 1 | NAT, filtering, VPN, logging | Melindungi jaringan dan mengatur akses internet |
+| UPS | 1 | Kapasitas sesuai beban router/switch | Menjaga perangkat aktif saat listrik padam |
+| Kabel jaringan | Sesuai survei | Cat6 atau sesuai kebutuhan | Mendukung koneksi Gigabit dan instalasi yang rapi |
+
+Pemilihan akhir tetap harus mempertimbangkan kompatibilitas, garansi, dukungan teknis, konsumsi daya, biaya pemeliharaan, serta anggaran.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
