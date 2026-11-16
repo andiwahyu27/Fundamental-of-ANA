@@ -171,6 +171,95 @@ nslookup example.com
 | PC-01 | Windows | Ethernet | - | - | - | - | DHCP/Statis |
 | Server-01 | Ubuntu | ens33 | - | - | - | - | DHCP/Statis |
 
+
+### 4. Mengumpulkan Informasi Instalasi dan Konfigurasi Jaringan
+
+Setelah sistem operasi yang digunakan berhasil diidentifikasi, langkah berikutnya adalah mengumpulkan informasi yang diperlukan agar instalasi dan konfigurasi jaringan dapat dilakukan dengan benar.
+
+#### Informasi kunci
+
+- **Protokol jaringan:** tentukan protokol yang digunakan, terutama TCP/IP sebagai standar jaringan yang paling umum.
+- **Metode pengalamatan IP:** tentukan apakah perangkat menggunakan IP statis atau DHCP.
+- **Subnet mask:** tentukan batas jaringan dan host pada suatu segmen jaringan.
+- **Default gateway:** tentukan alamat perangkat yang meneruskan lalu lintas ke jaringan lain.
+- **DNS server:** catat DNS primer dan sekunder untuk menerjemahkan nama domain menjadi alamat IP.
+
+#### Proses konfigurasi pada Windows
+
+1. Buka **Control Panel**.
+2. Pilih **Network and Sharing Center**.
+3. Pilih **Change adapter settings**.
+4. Klik kanan pada interface Ethernet atau Wi-Fi, kemudian pilih **Properties**.
+5. Pilih **Internet Protocol Version 4 (TCP/IPv4)**, lalu klik **Properties**.
+6. Pilih salah satu metode:
+   - **Obtain an IP address automatically** untuk menggunakan DHCP.
+   - **Use the following IP address** untuk mengisi IP secara manual.
+7. Isi IP address, subnet mask, default gateway, dan DNS server.
+8. Simpan konfigurasi, kemudian lakukan pengujian konektivitas.
+
+#### Proses konfigurasi pada Linux Debian/Ubuntu
+
+Konfigurasi dapat dilakukan melalui GUI atau CLI.
+
+Melalui GUI:
+
+1. Buka **Settings**.
+2. Pilih **Network**.
+3. Pilih interface jaringan.
+4. Masukkan konfigurasi IP, subnet mask/prefix, gateway, dan DNS.
+
+Melalui CLI:
+
+- Pada sistem lama, konfigurasi dapat berada di `/etc/network/interfaces`.
+- Pada Ubuntu versi baru, konfigurasi umumnya menggunakan **Netplan**.
+- Contoh parameter konfigurasi statis:
+
+```text
+Interface : eth0
+IP Address: 192.168.1.10
+Netmask   : 255.255.255.0
+Gateway   : 192.168.1.1
+DNS       : 8.8.8.8, 8.8.4.4
+```
+
+Contoh konfigurasi sederhana pada sistem yang menggunakan format interfaces:
+
+```text
+auto eth0
+iface eth0 inet static
+    address 192.168.1.10
+    netmask 255.255.255.0
+    gateway 192.168.1.1
+    dns-nameservers 8.8.8.8 8.8.4.4
+```
+
+> Nama interface dan metode penerapan dapat berbeda tergantung distribusi serta versi Linux.
+
+#### Proses konfigurasi pada macOS
+
+1. Buka **System Settings**.
+2. Pilih **Network**.
+3. Pilih interface Ethernet atau Wi-Fi.
+4. Klik **Details**.
+5. Atur IP address, subnet mask, gateway, dan DNS.
+6. Pilih DHCP jika alamat IP akan diperoleh otomatis.
+7. Simpan pengaturan dan uji konektivitas.
+
+#### Checklist sebelum konfigurasi
+
+| Informasi | Nilai |
+|---|---|
+| Sistem operasi dan versi | - |
+| Interface jaringan | - |
+| IP address | - |
+| Subnet mask/prefix | - |
+| Default gateway | - |
+| DNS primer | - |
+| DNS sekunder | - |
+| Metode pengalamatan | DHCP/Statis |
+| Hasil pengujian koneksi | - |
+
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
