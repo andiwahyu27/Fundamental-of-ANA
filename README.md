@@ -490,6 +490,121 @@ Subnet ini hanya menyediakan dua alamat host sehingga cocok untuk koneksi langsu
 
 Subnetting dapat menghemat alamat IP, mengurangi broadcast, meningkatkan keamanan, dan mempermudah pengelolaan jaringan.
 
+### 7. NAT dan VLAN pada Jaringan /24
+
+#### NAT
+
+**NAT (Network Address Translation)** menerjemahkan alamat IP private menjadi alamat IP public ketika perangkat mengakses internet.
+
+Analogi sederhananya, perangkat di dalam kantor memiliki alamat internal, sedangkan router bertindak sebagai petugas yang menggunakan satu alamat kantor saat berkomunikasi ke luar.
+
+Contoh:
+
+```text
+PC Pegawai : 192.168.10.10
+Gateway    : 192.168.10.1
+IP Public Router: 203.0.113.5
+```
+
+Ketika PC mengakses internet, router mengubah sumber paket:
+
+```text
+Sebelum NAT : 192.168.10.10:52001
+Sesudah NAT : 203.0.113.5:40001
+```
+
+Router menyimpan tabel penerjemahan sehingga balasan dari internet dapat dikirim kembali ke komputer yang benar.
+
+NAT berfungsi untuk:
+
+- memungkinkan banyak perangkat private berbagi satu IP public;
+- menghemat penggunaan IP public;
+- menyembunyikan struktur alamat internal;
+- meneruskan balasan internet ke perangkat yang sesuai.
+
+NAT biasanya diterapkan pada router atau firewall di batas antara jaringan internal dan internet.
+
+#### VLAN
+
+**VLAN (Virtual Local Area Network)** membagi satu jaringan fisik menjadi beberapa jaringan logis. Satu switch dapat digunakan untuk beberapa kelompok jaringan yang terpisah.
+
+Contoh pembagian:
+
+| VLAN | Fungsi | Network /24 | Gateway |
+|---:|---|---|---|
+| 10 | Pegawai | 192.168.10.0/24 | 192.168.10.1 |
+| 20 | Tamu | 192.168.20.0/24 | 192.168.20.1 |
+
+Dengan netmask `255.255.255.0`:
+
+- perangkat VLAN 10 menggunakan alamat `192.168.10.x`;
+- perangkat VLAN 20 menggunakan alamat `192.168.20.x`;
+- masing-masing VLAN memiliki hingga 254 host usable;
+- kedua VLAN merupakan jaringan yang berbeda.
+
+Contoh perangkat:
+
+```text
+PC Andi       : 192.168.10.10/24, VLAN 10
+Printer kantor: 192.168.10.20/24, VLAN 10
+Laptop tamu   : 192.168.20.10/24, VLAN 20
+```
+
+PC Andi dan printer berada pada VLAN yang sama sehingga dapat berkomunikasi melalui switch. Laptop tamu berada pada VLAN berbeda dan tidak dapat langsung mengakses perangkat VLAN 10.
+
+#### Komunikasi antar-VLAN
+
+Agar VLAN 10 dan VLAN 20 dapat saling berkomunikasi, diperlukan **inter-VLAN routing** menggunakan router atau Layer 3 Switch.
+
+Alurnya:
+
+```text
+PC VLAN 10
+192.168.10.10
+     |
+Gateway VLAN 10
+192.168.10.1
+     |
+Router/Layer 3 Switch
+     |
+Gateway VLAN 20
+192.168.20.1
+     |
+Perangkat VLAN 20
+192.168.20.10
+```
+
+Administrator dapat membuat aturan akses, misalnya:
+
+- VLAN Pegawai boleh mengakses server internal.
+- VLAN Tamu hanya boleh mengakses internet.
+- VLAN Tamu tidak boleh mengakses komputer atau printer pegawai.
+
+#### Access port dan trunk port
+
+- **Access port:** port switch yang terhubung ke satu perangkat biasa dan satu VLAN, misalnya PC pada VLAN 10.
+- **Trunk port:** port yang membawa beberapa VLAN sekaligus antara switch, router, atau access point. Frame biasanya diberi penanda VLAN menggunakan standar 802.1Q.
+
+#### Perbedaan NAT dan VLAN
+
+| Aspek | NAT | VLAN |
+|---|---|---|
+| Fungsi | Menerjemahkan IP private ke IP public | Memisahkan jaringan secara logis |
+| Digunakan pada | Router/firewall | Switch |
+| Fokus | Akses internet | Segmentasi jaringan internal |
+| Contoh | 192.168.10.10 menjadi IP public router | Memisahkan jaringan pegawai dan tamu |
+
+#### Contoh gabungan
+
+```text
+VLAN 10 Pegawai ─┐
+192.168.10.0/24  ├─ Router/Firewall ─ NAT ─ Internet
+VLAN 20 Tamu ────┘
+192.168.20.0/24
+```
+
+VLAN mengatur pemisahan jaringan di dalam kantor, sedangkan NAT menerjemahkan alamat ketika perangkat keluar menuju internet.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
