@@ -1645,6 +1645,99 @@ Rencanakan → Uji → Catat hasil → Analisis → Perbaiki → Uji ulang
 
 Jaringan dinyatakan siap ketika hasil pengujian memenuhi kriteria yang telah ditetapkan, risiko telah dicatat, dan bukti pengujian tersimpan.
 
+### 17. Menyesuaikan Jaringan Berdasarkan Hasil Pengujian
+
+Pengujian menghasilkan data, sedangkan penyesuaian atau tuning mengubah konfigurasi dan desain berdasarkan data tersebut. Proses ini bersifat iteratif:
+
+```text
+Uji → Analisis → Sesuaikan → Uji ulang → Dokumentasikan
+```
+
+Jangan melakukan perubahan secara acak. Setiap perubahan sebaiknya memiliki alasan, target, waktu pelaksanaan, dan hasil pembanding.
+
+#### 1. Jika sinyal lemah
+
+Jika heatmap menunjukkan area dengan sinyal lemah atau dead spot, pertimbangkan:
+
+- memindahkan AP ke posisi yang lebih sentral atau lebih tinggi;
+- menambahkan AP pada area yang belum tercakup;
+- mengubah arah antena eksternal agar fokus ke area yang membutuhkan;
+- mengurangi hambatan fisik seperti benda logam atau peralatan besar;
+- memeriksa kualitas kabel, port switch, dan daya PoE;
+- melakukan pengukuran ulang setelah perubahan.
+
+Menambah daya pancar bukan selalu solusi terbaik. Daya yang terlalu tinggi dapat meningkatkan interferensi dan membuat roaming tidak optimal.
+
+#### 2. Jika throughput atau kinerja buruk
+
+Analisis terlebih dahulu apakah masalah berasal dari jaringan lokal, access point, switch, router, ISP, atau perangkat klien.
+
+Tindakan yang dapat dilakukan:
+
+- pindahkan AP ke kanal yang lebih sedikit interferensinya;
+- sesuaikan lebar kanal, terutama di lingkungan padat;
+- gunakan 5 GHz untuk perangkat yang membutuhkan throughput lebih tinggi jika jangkauan memadai;
+- periksa kabel, konektor, port switch, dan kecepatan link;
+- pastikan uplink tidak menjadi bottleneck;
+- periksa penggunaan CPU, memori, bandwidth, dan kapasitas klien AP;
+- pastikan tidak ada objek fisik yang menghalangi sinyal;
+- lakukan pengujian ulang menggunakan lokasi dan durasi yang sama.
+
+Lebar kanal 80 MHz atau 160 MHz dapat meningkatkan kecepatan teoritis, tetapi tidak selalu menghasilkan kinerja lebih baik jika spektrum padat atau banyak interferensi.
+
+#### 3. Jika roaming bermasalah
+
+Jika perangkat tidak berpindah ke AP yang lebih dekat atau koneksi terputus ketika berpindah lokasi:
+
+- sesuaikan transmit power agar cakupan AP tidak terlalu luas atau terlalu sempit;
+- pastikan SSID, metode keamanan, dan konfigurasi jaringan konsisten;
+- atur kanal AP yang berdekatan agar tidak saling mengganggu;
+- periksa overlap sinyal dan area dead spot;
+- aktifkan fitur roaming assistance atau roaming optimization jika tersedia;
+- periksa dukungan perangkat klien terhadap fitur fast roaming;
+- uji menggunakan lebih dari satu jenis laptop atau smartphone.
+
+Keputusan berpindah AP sering dibuat oleh perangkat klien, sehingga hasil roaming dapat berbeda antarperangkat.
+
+#### 4. Jika keamanan belum memadai
+
+Jika ditemukan kelemahan keamanan:
+
+- gunakan password yang kuat dan unik;
+- gunakan WPA3 atau WPA2-AES sesuai kompatibilitas perangkat;
+- nonaktifkan enkripsi atau protokol lama yang lemah;
+- pisahkan jaringan tamu, pegawai, server, dan IoT menggunakan VLAN;
+- perbarui firmware;
+- nonaktifkan fitur administrasi yang tidak diperlukan;
+- batasi akses administrasi hanya dari jaringan atau perangkat tertentu;
+- periksa aturan firewall, log, dan akun administrator;
+- lakukan pengujian ulang menggunakan kredensial yang salah dan perangkat yang tidak terdaftar.
+
+#### 5. Menilai hasil penyesuaian
+
+Setelah perubahan diterapkan, bandingkan hasil sebelum dan sesudah:
+
+| Parameter | Sebelum | Sesudah | Target | Status |
+|---|---:|---:|---:|---|
+| RSSI area rapat | -75 dBm | -58 dBm | Sesuai desain | Lulus |
+| Throughput | 35 Mbps | 120 Mbps | Minimal 100 Mbps | Lulus |
+| Packet loss | 8% | 0% | Mendekati 0% | Lulus |
+| Roaming interruption | 5 detik | 1 detik | Tidak mengganggu sesi | Lulus |
+
+#### 6. Dokumentasi perubahan
+
+Catat setiap penyesuaian:
+
+- tanggal dan waktu perubahan;
+- perangkat atau AP yang diubah;
+- konfigurasi sebelum dan sesudah;
+- alasan perubahan;
+- hasil pengujian sebelum dan sesudah;
+- pelaksana dan pihak yang menyetujui;
+- rencana rollback jika perubahan menimbulkan masalah.
+
+Jaringan dianggap optimal bukan karena tidak pernah diubah, tetapi karena setiap perubahan dilakukan berdasarkan bukti, diuji kembali, dan terdokumentasi.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
