@@ -1515,6 +1515,136 @@ Klien Wi-Fi → IP address → gateway → DNS → internet
 
 Konfigurasi dinyatakan selesai setelah hasil pengujian dicatat dan konfigurasi akhir dicadangkan.
 
+### 16. Menetapkan Rencana Pengujian Jaringan
+
+Pengujian jaringan bukan sekadar memastikan perangkat dapat terhubung. Pengujian harus dilakukan secara sistematis untuk mengetahui apakah jaringan memenuhi kebutuhan cakupan, kecepatan, keamanan, roaming, dan kestabilan.
+
+#### 1. Menentukan tujuan dan kriteria keberhasilan
+
+Sebelum melakukan pengujian, tetapkan:
+
+- area yang harus mendapatkan layanan;
+- jumlah perangkat yang diuji;
+- target kekuatan sinyal;
+- target throughput dan latency;
+- aturan keamanan yang harus dipenuhi;
+- durasi dan beban pengujian;
+- bukti atau hasil yang harus didokumentasikan.
+
+Contoh kriteria:
+
+| Aspek | Contoh kriteria keberhasilan |
+|---|---|
+| Coverage | Tidak ada dead spot pada area kerja utama |
+| Sinyal | Nilai RSSI memenuhi kebutuhan aplikasi dan lokasi |
+| Throughput | Kecepatan sesuai target desain pada lokasi pengujian |
+| Latency | Keterlambatan masih sesuai kebutuhan aplikasi |
+| Roaming | Perpindahan antar-AP tidak memutus sesi secara signifikan |
+| Keamanan | Klien tanpa kredensial tidak dapat masuk |
+| Stabilitas | Koneksi tetap berjalan selama pengujian beban |
+
+#### 2. Pengujian jangkauan atau coverage
+
+Coverage testing memastikan sinyal mencapai seluruh area yang telah ditentukan. Gunakan Wi-Fi analyzer atau perangkat lunak heatmap untuk memetakan kekuatan sinyal dalam dBm.
+
+Langkah umum:
+
+1. Buat denah area pengujian.
+2. Tentukan titik pengukuran dengan jarak yang konsisten.
+3. Ukur RSSI, noise, channel, dan kualitas koneksi.
+4. Tandai area dengan sinyal lemah atau dead spot.
+5. Ulangi pengukuran setelah posisi AP atau kanal diperbaiki.
+
+Nilai dBm biasanya bernilai negatif. Semakin mendekati nol, sinyal semakin kuat. Jangan menetapkan satu angka universal tanpa memperhatikan jenis aplikasi, noise, kemampuan klien, dan kondisi lokasi.
+
+#### 3. Pengujian kinerja
+
+Ukur throughput, latency, packet loss, dan kestabilan pada beberapa lokasi serta waktu yang berbeda. `iperf3` dapat digunakan untuk mengukur performa antara dua perangkat yang berada dalam jaringan yang sama.
+
+Contoh pada komputer server:
+
+```bash
+iperf3 -s
+```
+
+Contoh pada komputer klien:
+
+```bash
+iperf3 -c 192.168.10.10 -t 30
+```
+
+Uji unduh dan unggah secara terpisah jika diperlukan. Bedakan hasil jaringan lokal dengan hasil speed test internet karena speed test internet juga dipengaruhi ISP, server tujuan, dan jalur internet.
+
+Pengujian tambahan:
+
+```bash
+ping 192.168.10.1
+traceroute example.com
+```
+
+#### 4. Pengujian roaming
+
+Jika terdapat beberapa AP, uji kemampuan perangkat berpindah dari satu AP ke AP lain tanpa kehilangan koneksi yang mengganggu.
+
+Langkah pengujian:
+
+1. Hubungkan perangkat klien ke SSID yang benar.
+2. Mulai ping atau panggilan video sebagai sesi pengamatan.
+3. Bergerak melewati area cakupan AP pertama menuju AP berikutnya.
+4. Catat perubahan BSSID, waktu perpindahan, packet loss, dan apakah sesi terputus.
+5. Ulangi dengan beberapa perangkat klien.
+
+Hasil roaming dipengaruhi oleh AP, pengaturan kanal, overlap, driver klien, dan keputusan klien dalam berpindah AP.
+
+#### 5. Pengujian keamanan
+
+Pastikan:
+
+- enkripsi WPA3 atau WPA2-AES berjalan sesuai desain;
+- password yang salah ditolak;
+- SSID tamu tidak dapat mengakses server atau perangkat pegawai;
+- VLAN dan firewall menerapkan aturan akses;
+- port administrasi tidak terbuka ke internet tanpa alasan;
+- firmware dan konfigurasi default yang berisiko sudah diperbarui;
+- log mencatat kejadian penting.
+
+Pengujian keamanan harus dilakukan pada jaringan milik sendiri atau jaringan yang telah memperoleh izin. Jangan melakukan pemindaian terhadap jaringan pihak lain.
+
+#### 6. Pengujian stabilitas dan beban
+
+Hubungkan sejumlah perangkat secara bersamaan dan lakukan aktivitas yang menyerupai kondisi nyata, misalnya browsing, video conference, transfer file, dan akses aplikasi internal.
+
+Amati:
+
+- putus koneksi;
+- peningkatan latency;
+- packet loss;
+- penggunaan CPU dan memori perangkat;
+- penggunaan kanal dan bandwidth;
+- suhu perangkat;
+- error pada port atau interface.
+
+Mulai dengan beban kecil, tingkatkan secara bertahap, dan hentikan pengujian jika berisiko mengganggu layanan produksi.
+
+#### 7. Format laporan pengujian
+
+| Waktu | Lokasi | SSID/VLAN | Perangkat klien | RSSI | Throughput | Latency | Hasil | Catatan |
+|---|---|---|---|---:|---:|---:|---|---|
+| 09:00 | Ruang rapat | Kantor-Internal/10 | Laptop-01 | -55 dBm | 180 Mbps | 8 ms | Lulus | Sinyal stabil |
+| 09:15 | Lobby | Kantor-Tamu/20 | Smartphone-01 | -68 dBm | 80 Mbps | 15 ms | Lulus | Perlu pemantauan |
+
+Dokumentasikan alat yang digunakan, versi firmware, konfigurasi saat pengujian, hasil mentah, kesimpulan, dan rekomendasi perbaikan.
+
+#### 8. Siklus pengujian dan perbaikan
+
+Gunakan siklus berikut:
+
+```text
+Rencanakan → Uji → Catat hasil → Analisis → Perbaiki → Uji ulang
+```
+
+Jaringan dinyatakan siap ketika hasil pengujian memenuhi kriteria yang telah ditetapkan, risiko telah dicatat, dan bukti pengujian tersimpan.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
