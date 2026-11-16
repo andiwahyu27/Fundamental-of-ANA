@@ -1770,6 +1770,98 @@ Beberapa fungsi kritis yang perlu dipertimbangkan:
 
 Dengan menetapkan fungsi kritis, administrator memiliki dasar spesifikasi teknis yang jelas untuk memilih model perangkat yang sesuai.
 
+### 19. Menganalisis Persyaratan Teknis dan Pengguna
+
+Setelah perangkat yang diperlukan diidentifikasi, kebutuhan pengguna perlu diterjemahkan menjadi persyaratan teknis yang terukur. Kebutuhan pengguna menggunakan bahasa sehari-hari, sedangkan persyaratan teknis menjadi acuan saat memilih, membeli, dan menguji perangkat.
+
+#### Kebutuhan fungsional dan persyaratan teknis
+
+| Kebutuhan pengguna | Persyaratan teknis terukur | Fungsi jaringan |
+|---|---|---|
+| Video conference lancar tanpa lag | Latency maksimum 50 ms dan dukungan QoS | Prioritas trafik suara/video |
+| Akses dan penyimpanan data cepat | Throughput minimum 1 Gbps serta port Gigabit atau 10 GbE | Throughput tinggi |
+| Jaringan tamu terpisah dari internal | Dukungan VLAN dan port security | Segmentasi dan keamanan |
+
+Persyaratan teknis sebaiknya bersifat spesifik, terukur, dapat dicapai, relevan, dan memiliki batas waktu atau target yang jelas.
+
+#### Mengapa spesifikasi terukur penting
+
+- **Menghindari pemborosan:** perangkat dapat ditolak jika tidak memenuhi target, misalnya router dengan latency 200 ms ketika kebutuhan maksimum hanya 50 ms.
+- **Menjadi dasar pengujian:** klaim throughput 1 Gbps dapat diuji setelah perangkat dipasang.
+- **Memudahkan perbandingan vendor:** semua model dibandingkan menggunakan parameter yang sama.
+- **Mengurangi perbedaan persepsi:** kebutuhan bisnis dan kemampuan perangkat diterjemahkan dalam ukuran teknis yang jelas.
+
+Alur perumusannya adalah:
+
+`Kebutuhan pengguna → Persyaratan teknis → Fungsi jaringan → Kriteria pengujian`
+
+### 20. Mengevaluasi Persyaratan Berdasarkan Kebijakan Organisasi
+
+Spesifikasi teknis tidak boleh langsung diterapkan sebelum diperiksa kesesuaiannya dengan standar dan kebijakan internal organisasi. Tahap ini berfungsi sebagai penyaringan agar perangkat yang dipilih tidak menimbulkan risiko baru.
+
+#### Kebijakan keamanan
+
+Periksa setidaknya:
+
+- protokol keamanan yang diwajibkan;
+- aturan perlindungan data;
+- persyaratan akses jarak jauh;
+- standar pengelolaan akun administrator;
+- kebutuhan pencatatan log dan audit;
+- aturan pembaruan firmware dan penanganan kerentanan.
+
+Contoh penerapan:
+
+- Jika organisasi mewajibkan enkripsi tertinggi, AP harus mendukung **WPA3**. Perangkat yang hanya mendukung WPA2 dapat ditolak meskipun harganya lebih murah.
+- Jika akses jarak jauh diwajibkan menggunakan VPN, router atau firewall harus mendukung protokol kuat seperti **IPsec** atau **SSL/TLS VPN**.
+- Perangkat harus mendukung pengelolaan yang sesuai kebijakan, seperti pembatasan akses administrasi, pencatatan log, dan pembaruan keamanan.
+
+Prinsip utamanya adalah keamanan merupakan persyaratan wajib. Perangkat yang tidak memenuhi standar keamanan organisasi tidak boleh dibeli atau dipasang tanpa persetujuan dan mitigasi risiko yang terdokumentasi.
+
+### 21. Memilih Perangkat Jaringan Sesuai Kebutuhan
+
+Setelah persyaratan teknis dan kebijakan organisasi ditetapkan, bandingkan model perangkat dari beberapa vendor. Tujuannya bukan sekadar mencari harga termurah, tetapi memilih perangkat yang paling sesuai, efisien, aman, dan memiliki kapasitas pertumbuhan.
+
+Gunakan daftar persyaratan teknis sebagai checklist wajib dan fokus pada angka serta fitur yang dapat diverifikasi melalui datasheet, dokumentasi, atau pengujian.
+
+#### Parameter perbandingan
+
+1. **Jumlah port dan kecepatan**
+   - Pastikan jumlah port mencukupi seluruh workstation dan menyediakan port cadangan.
+   - Periksa apakah port mendukung 10/100 Mbps, Gigabit Ethernet, 2,5 GbE, 10 GbE, atau kecepatan lain yang dibutuhkan.
+   - Perhatikan kebutuhan uplink dan koneksi fiber optic.
+
+2. **Throughput dan kapasitas**
+   - Periksa throughput total router atau firewall.
+   - Pastikan perangkat mampu memproses volume data saat jam sibuk tanpa menjadi bottleneck.
+   - Bedakan throughput routing biasa dengan throughput ketika firewall, VPN, DPI, atau fitur keamanan lain diaktifkan.
+
+3. **Fitur manajemen dan konfigurasi**
+   - Periksa ketersediaan Web-GUI, CLI, SNMP, syslog, backup konfigurasi, dan konfigurasi terpusat.
+   - Pastikan fitur kritis seperti VLAN tagging, QoS, port security, VPN, atau firewall tersedia sesuai kebutuhan.
+   - Pertimbangkan kemudahan pemantauan dan dukungan cloud management bila diperlukan.
+
+4. **Skalabilitas dan headroom**
+   - Sediakan kapasitas cadangan untuk pertumbuhan pengguna dan trafik.
+   - Periksa kemungkinan penambahan modul fiber optic atau uplink berkecepatan lebih tinggi.
+   - Pastikan AP mampu menangani peningkatan jumlah pengguna dalam beberapa tahun mendatang.
+   - Jangan memilih perangkat yang langsung bekerja pada batas maksimum kapasitasnya.
+
+#### Contoh checklist perbandingan
+
+| Parameter | Pertanyaan evaluasi |
+|---|---|
+| Port | Apakah jumlah dan jenis port mencukupi, termasuk cadangan? |
+| Kecepatan | Apakah port dan uplink mendukung target throughput? |
+| Kapasitas | Apakah throughput cukup saat fitur keamanan aktif? |
+| Manajemen | Apakah perangkat mudah dikonfigurasi, dipantau, dan dicadangkan? |
+| Fitur kritis | Apakah VLAN, QoS, VPN, firewall, atau PoE tersedia? |
+| Skalabilitas | Apakah tersedia headroom dan opsi pengembangan? |
+| Kepatuhan | Apakah perangkat memenuhi kebijakan keamanan organisasi? |
+| Biaya | Apakah total biaya kepemilikan sebanding dengan manfaatnya? |
+
+Keputusan akhir sebaiknya mempertimbangkan spesifikasi, keamanan, dukungan vendor, garansi, ketersediaan suku cadang, lisensi, biaya operasional, dan hasil pengujian. Perangkat terbaik adalah perangkat yang memenuhi kebutuhan teknis dan kebijakan organisasi dengan kapasitas cadangan yang masuk akal.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
