@@ -1096,6 +1096,119 @@ Contoh daftar kebutuhan:
 | 5 | Rack | 12U, ventilasi dan manajemen kabel | 1 unit | Ruang server |
 | 6 | UPS | 1500 VA atau sesuai hasil perhitungan beban | 1 unit | Ruang server |
 
+### 12. Menetapkan Kebutuhan Keamanan dan Manajemen Jaringan
+
+Kecepatan jaringan harus diimbangi dengan keamanan dan kemudahan pengelolaan. Jaringan kantor dapat dianalogikan sebagai gedung: kapasitas adalah lebar lorong, keamanan adalah satpam dan kunci, sedangkan manajemen adalah ruang kendali yang membantu administrator memantau kondisi gedung.
+
+#### 1. Spesifikasi keamanan
+
+Saat memilih router, firewall, atau switch, periksa fitur keamanan berikut:
+
+- **Firewall bawaan:** menyaring lalu lintas masuk dan keluar berdasarkan aturan. Istilah yang umum ditemukan antara lain SPI Firewall, access control, dan content filtering.
+- **VPN:** menyediakan koneksi terenkripsi bagi pengguna atau kantor cabang yang mengakses jaringan dari lokasi lain.
+- **Port security:** membatasi perangkat yang boleh terhubung pada port switch, misalnya berdasarkan MAC address atau jumlah MAC address.
+- **VLAN dan access control:** memisahkan jaringan pegawai, tamu, server, dan perangkat IoT serta mengatur siapa yang boleh mengaksesnya.
+- **Logging dan alert:** mencatat kejadian penting dan memberi peringatan ketika terdapat aktivitas yang tidak biasa.
+- **Pembaruan firmware:** memastikan perangkat dapat menerima perbaikan keamanan dari produsennya.
+
+Firewall dapat dianalogikan sebagai satpam di gerbang kantor. Firewall tidak hanya meneruskan paket, tetapi memeriksa apakah lalu lintas tersebut sesuai dengan aturan yang diizinkan.
+
+#### 2. VPN untuk akses jarak jauh
+
+VPN membuat koneksi aman antara pengguna atau jaringan remote dengan jaringan kantor. Data yang melewati jaringan publik dikirim melalui tunnel terenkripsi.
+
+Contoh penggunaan:
+
+- pegawai mengakses server kantor dari rumah;
+- kantor cabang terhubung ke kantor pusat;
+- administrator melakukan pemeliharaan perangkat dari lokasi lain.
+
+VPN harus dilengkapi autentikasi yang kuat, pembatasan hak akses, dan pencatatan aktivitas. Jangan memberikan akses penuh ke seluruh jaringan jika pengguna hanya membutuhkan satu aplikasi atau server.
+
+#### 3. Port security pada switch
+
+Port security membantu mencegah perangkat asing terhubung sembarangan ke jaringan kabel.
+
+Contoh kebijakan:
+
+- satu port hanya boleh digunakan oleh satu perangkat;
+- alamat MAC perangkat dicatat atau dipelajari secara otomatis;
+- port dinonaktifkan atau diberi peringatan jika muncul perangkat yang tidak dikenal;
+- port yang tidak digunakan dipindahkan ke VLAN yang tidak memiliki akses atau dinonaktifkan.
+
+Port security bukan pengganti autentikasi pengguna, tetapi merupakan lapisan perlindungan tambahan.
+
+#### 4. Perangkat managed dan unmanaged
+
+| Jenis perangkat | Karakteristik | Cocok untuk |
+|---|---|---|
+| Unmanaged | Plug-and-play, tidak memiliki konfigurasi dan monitoring yang lengkap | Jaringan sangat kecil dan sederhana |
+| Smart managed | Memiliki Web-GUI serta fitur dasar VLAN, monitoring, dan QoS | Kantor kecil hingga menengah |
+| Managed | Dapat dikonfigurasi melalui Web-GUI atau CLI dan memiliki fitur monitoring lengkap | Jaringan profesional dan kompleks |
+
+Switch unmanaged seperti terminal listrik: perangkat dapat langsung digunakan, tetapi administrator tidak dapat melihat atau mengatur banyak hal. Switch managed menyediakan ruang kendali untuk memantau port, VLAN, trafik, error, dan kondisi perangkat.
+
+#### 5. Fitur manajemen yang perlu diperhatikan
+
+Perangkat managed sebaiknya menyediakan:
+
+- **Web-GUI** untuk konfigurasi melalui tampilan grafis;
+- **CLI** untuk konfigurasi lanjutan dan otomasi;
+- **monitoring trafik** untuk mengetahui sumber penggunaan bandwidth;
+- **VLAN** untuk segmentasi jaringan;
+- **QoS** untuk memprioritaskan layanan penting seperti video conference atau VoIP;
+- **SNMP atau telemetry** untuk pemantauan terpusat;
+- **backup dan restore konfigurasi**;
+- **NTP dan syslog** untuk menyamakan waktu serta menyimpan log;
+- **role-based access** agar setiap administrator memperoleh hak akses sesuai tugas.
+
+#### 6. Cloud management
+
+Cloud management memungkinkan administrator memantau dan mengelola perangkat melalui portal atau aplikasi cloud. Fitur ini bermanfaat ketika:
+
+- perangkat berada di lokasi yang jauh;
+- organisasi memiliki banyak cabang;
+- administrator membutuhkan monitoring terpusat;
+- konfigurasi dan notifikasi perlu dikelola dari satu dashboard.
+
+Namun, cloud management juga perlu dievaluasi dari sisi ketergantungan internet, biaya langganan, lokasi penyimpanan data, keamanan akun, dan kemampuan perangkat untuk tetap berjalan ketika koneksi cloud terputus.
+
+#### 7. Pendekatan Zero Trust
+
+Zero Trust berarti tidak langsung mempercayai perangkat atau pengguna hanya karena berada di dalam jaringan kantor. Setiap akses perlu diverifikasi dan dibatasi sesuai kebutuhan.
+
+Prinsip sederhananya:
+
+1. verifikasi identitas pengguna dan perangkat;
+2. berikan hak akses minimum;
+3. pisahkan jaringan berdasarkan fungsi;
+4. pantau aktivitas dan simpan log;
+5. evaluasi akses secara berkala.
+
+Contoh penerapan:
+
+- VLAN tamu hanya boleh mengakses internet;
+- VLAN pegawai boleh mengakses aplikasi internal tertentu;
+- VLAN IoT tidak boleh mengakses komputer pegawai;
+- administrator menggunakan akun pribadi dengan hak akses yang tercatat;
+- akses VPN menggunakan autentikasi multifaktor jika tersedia.
+
+#### 8. Checklist pemilihan keamanan dan manajemen
+
+| Kebutuhan | Pertanyaan pemeriksaan |
+|---|---|
+| Firewall | Apakah perangkat dapat menyaring koneksi dan mencatat log? |
+| VPN | Apakah mendukung akses remote yang terenkripsi? |
+| Port security | Apakah port switch dapat membatasi perangkat asing? |
+| Segmentasi | Apakah mendukung VLAN dan aturan antar-segmen? |
+| Monitoring | Apakah trafik, error, dan penggunaan port dapat dipantau? |
+| Konfigurasi | Apakah tersedia Web-GUI, CLI, backup, dan restore? |
+| Pembaruan | Apakah firmware masih didukung produsen? |
+| Akses administrator | Apakah tersedia akun, role, dan autentikasi yang aman? |
+| Cloud management | Apakah manfaatnya sebanding dengan biaya dan ketergantungannya? |
+
+Perangkat yang sedikit lebih mahal tetapi memiliki keamanan dan manajemen yang baik dapat memberikan nilai lebih besar daripada perangkat cepat yang tidak dapat dipantau atau dikendalikan.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
