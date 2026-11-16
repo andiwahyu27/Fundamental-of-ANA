@@ -343,6 +343,153 @@ Subnetting membantu:
 - mengurangi broadcast yang tidak diperlukan;
 - meningkatkan kinerja jaringan.
 
+### 6. Menentukan Kelas atau Segmen Alamat Jaringan
+
+#### Dasar kelas alamat IPv4
+
+IPv4 terdiri dari 32 bit yang ditulis dalam empat oktet, misalnya `192.168.1.10`. Setiap oktet memiliki nilai 0–255.
+
+Pada konsep **classful addressing**:
+
+| Kelas | Oktet pertama | Default prefix | Subnet mask | Host usable |
+|---|---:|---:|---|---:|
+| A | 1–126 | /8 | 255.0.0.0 | 2²⁴ − 2 = 16.777.214 |
+| B | 128–191 | /16 | 255.255.0.0 | 2¹⁶ − 2 = 65.534 |
+| C | 192–223 | /24 | 255.255.255.0 | 2⁸ − 2 = 254 |
+
+Alamat `127.0.0.0/8` digunakan untuk loopback, sedangkan `224.0.0.0` sampai `239.255.255.255` digunakan untuk multicast.
+
+Saat ini, jaringan modern lebih banyak menggunakan **CIDR** dan subnetting daripada pembagian kelas secara kaku.
+
+#### Pengertian prefix
+
+Prefix menunjukkan jumlah bit yang digunakan untuk bagian network.
+
+Contoh:
+
+```text
+192.168.1.0/24
+```
+
+Artinya:
+
+- 24 bit pertama adalah network bit.
+- 8 bit sisanya adalah host bit.
+- Subnet mask-nya adalah `255.255.255.0`.
+- Jumlah alamat total adalah `2⁸ = 256`.
+- Host usable umumnya `256 − 2 = 254`.
+
+Dua alamat yang tidak digunakan untuk host biasa adalah:
+
+- **Network address:** alamat pertama.
+- **Broadcast address:** alamat terakhir.
+
+Rumus umum:
+
+```text
+Jumlah bit host (h) = 32 - prefix
+Jumlah alamat total = 2^h
+Jumlah host usable = 2^h - 2
+```
+
+Pengecualian khusus berlaku pada beberapa subnet point-to-point, misalnya /31, dan jaringan satu host, misalnya /32.
+
+#### Cara menghitung kebutuhan prefix
+
+1. Tentukan jumlah host yang dibutuhkan.
+2. Tambahkan ruang pertumbuhan jika diperlukan.
+3. Cari jumlah bit host dengan rumus `2^h - 2 >= kebutuhan host`.
+4. Hitung prefix dengan rumus `prefix = 32 - h`.
+5. Tentukan subnet mask, network address, broadcast address, dan rentang host.
+
+Contoh kebutuhan **50 host**:
+
+```text
+2^5 - 2 = 30      belum cukup
+2^6 - 2 = 62      cukup
+h = 6
+prefix = 32 - 6 = /26
+```
+
+Maka subnet yang sesuai adalah `/26` atau `255.255.255.192`.
+
+### Tabel Prefix /30 sampai /24
+
+| Prefix | Subnet mask | Bit host | Total alamat | Host usable | Block size | Contoh penggunaan |
+|---:|---|---:|---:|---:|---:|---|
+| /30 | 255.255.255.252 | 2 | 4 | 2 | 4 | Link point-to-point |
+| /29 | 255.255.255.248 | 3 | 8 | 6 | 8 | Jaringan sangat kecil |
+| /28 | 255.255.255.240 | 4 | 16 | 14 | 16 | Lab/perangkat kecil |
+| /27 | 255.255.255.224 | 5 | 32 | 30 | 32 | Ruang kerja kecil |
+| /26 | 255.255.255.192 | 6 | 64 | 62 | 64 | Hingga 62 perangkat |
+| /25 | 255.255.255.128 | 7 | 128 | 126 | 128 | Hingga 126 perangkat |
+| /24 | 255.255.255.0 | 8 | 256 | 254 | 256 | Jaringan LAN umum |
+
+#### Penjelasan setiap prefix
+
+- **/30:** memiliki 2 bit host. Total 4 alamat, tetapi hanya 2 alamat usable. Contoh: network `192.168.1.0`, host `.1–.2`, broadcast `.3`.
+- **/29:** memiliki 3 bit host. Total 8 alamat dan 6 host usable. Cocok untuk segmen kecil atau beberapa perangkat.
+- **/28:** memiliki 4 bit host. Total 16 alamat dan 14 host usable.
+- **/27:** memiliki 5 bit host. Total 32 alamat dan 30 host usable.
+- **/26:** memiliki 6 bit host. Total 64 alamat dan 62 host usable. Cocok untuk kebutuhan hingga 50 host.
+- **/25:** memiliki 7 bit host. Total 128 alamat dan 126 host usable. Cocok untuk kebutuhan hingga 100–120 host.
+- **/24:** memiliki 8 bit host. Total 256 alamat dan 254 host usable. Umum digunakan pada jaringan `192.168.x.0/24`.
+
+#### Block size
+
+Block size membantu menentukan batas antar-subnet:
+
+```text
+Block size = 256 - nilai subnet mask pada oktet yang berubah
+```
+
+Contoh prefix `/26`:
+
+```text
+Subnet mask = 255.255.255.192
+Block size  = 256 - 192 = 64
+```
+
+Maka subnet pada oktet terakhir dimulai dari:
+
+```text
+0, 64, 128, 192
+```
+
+#### Contoh perhitungan /26
+
+Misalkan alamat yang digunakan adalah `192.168.10.70/26`.
+
+1. Block size = `256 − 192 = 64`.
+2. Rentang subnet yang tersedia: 0–63, 64–127, 128–191, 192–255.
+3. Angka 70 berada pada rentang 64–127.
+4. Network address = `192.168.10.64`.
+5. Broadcast address = `192.168.10.127`.
+6. Host usable = `192.168.10.65` sampai `192.168.10.126`.
+7. Jumlah host usable = 62.
+
+#### Contoh perhitungan /30
+
+Misalkan jaringan point-to-point menggunakan `10.0.0.4/30`.
+
+| Komponen | Alamat |
+|---|---|
+| Network address | 10.0.0.4 |
+| Host usable pertama | 10.0.0.5 |
+| Host usable kedua | 10.0.0.6 |
+| Broadcast address | 10.0.0.7 |
+
+Subnet ini hanya menyediakan dua alamat host sehingga cocok untuk koneksi langsung antara dua perangkat jaringan.
+
+#### Memilih skema pengalamatan
+
+- **Jaringan kecil:** gunakan satu segmen seperti `192.168.1.0/24`, atau subnet yang lebih kecil agar alamat tidak terbuang.
+- **Jaringan menengah:** gunakan beberapa subnet berdasarkan divisi, lantai, fungsi, atau VLAN.
+- **Jaringan besar/kompleks:** gunakan CIDR, VLSM, dan perencanaan hierarkis.
+- **Jaringan point-to-point:** gunakan /30 atau pertimbangkan /31 jika perangkat dan desain jaringan mendukungnya.
+
+Subnetting dapat menghemat alamat IP, mengurangi broadcast, meningkatkan keamanan, dan mempermudah pengelolaan jaringan.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
