@@ -1298,6 +1298,92 @@ Misalnya kantor memiliki 60 perangkat aktif yang tersebar di dua lantai:
 
 Perangkat yang tepat adalah perangkat yang sesuai dengan kondisi lokasi dan kebutuhan pengguna, bukan semata-mata perangkat dengan angka kecepatan paling besar.
 
+### 14. Memasang Perangkat Sesuai Kebutuhan Teknis
+
+Pemasangan fisik, terutama Access Point, memengaruhi cakupan sinyal, kualitas koneksi, roaming, dan keamanan perangkat. Perangkat dengan spesifikasi tinggi tetap dapat bekerja buruk jika dipasang di lokasi yang tidak tepat.
+
+#### 1. Menentukan posisi Access Point
+
+Tempatkan AP:
+
+- sedekat mungkin dengan posisi tengah area layanan;
+- pada posisi yang cukup tinggi, seperti plafon atau bagian atas dinding;
+- jauh dari sudut ruangan yang dikelilingi banyak dinding;
+- mudah dijangkau untuk pemeliharaan, tetapi tidak mudah diakses oleh orang yang tidak berwenang;
+- sesuai dengan hasil survei lokasi dan kebutuhan pengguna.
+
+Posisi sentral dan tinggi membantu mengurangi hambatan serta membuat distribusi sinyal lebih merata.
+
+#### 2. Menghindari hambatan dan sumber interferensi
+
+Hindari menempatkan AP:
+
+- di dalam lemari atau di balik benda logam;
+- di belakang peralatan besar;
+- di dekat dinding beton atau objek yang menghalangi sinyal;
+- di dekat microwave, perangkat Bluetooth padat, atau sumber interferensi radio;
+- di sudut ruangan jika area layanan berada di sisi yang berlawanan.
+
+Benda logam, dinding tebal, dan peralatan elektronik dapat melemahkan atau memantulkan sinyal. Jika kualitas sinyal buruk, jangan langsung menaikkan daya pancar; periksa kembali posisi AP, kanal, dan kemungkinan interferensi.
+
+#### 3. Jarak antar-AP dan roaming
+
+Jika beberapa AP dipasang pada area yang berdekatan, sediakan overlap sinyal yang cukup agar perangkat pengguna dapat berpindah AP tanpa kehilangan koneksi. Angka 15–20% dapat digunakan sebagai gambaran awal, tetapi nilai sebenarnya harus divalidasi melalui site survey karena dipengaruhi struktur bangunan, frekuensi, daya pancar, dan jenis perangkat klien.
+
+Untuk roaming yang baik:
+
+- gunakan SSID dan metode keamanan yang konsisten jika jaringan memang dirancang sebagai satu layanan;
+- rencanakan kanal agar AP yang berdekatan tidak saling mengganggu;
+- kurangi daya pancar jika area cakupan terlalu tumpang tindih;
+- gunakan fitur fast roaming jika perangkat dan jaringan mendukungnya;
+- lakukan pengujian sambil berpindah lokasi.
+
+Overlap yang terlalu kecil dapat menyebabkan dead spot. Overlap yang terlalu besar atau kanal yang sama dapat meningkatkan interferensi dan membuat klien berpindah AP secara tidak optimal.
+
+#### 4. Sumber daya listrik dengan PoE
+
+**PoE (Power over Ethernet)** mengirimkan daya dan data melalui satu kabel Ethernet. Dengan PoE, AP tidak memerlukan adaptor listrik terpisah di dekat lokasi pemasangan.
+
+Komponen yang perlu diperiksa:
+
+- switch PoE atau injector PoE;
+- standar PoE yang didukung;
+- kebutuhan daya setiap AP;
+- total power budget switch;
+- kualitas kabel dan konektor;
+- panjang kabel serta jalur instalasi.
+
+Pastikan total kebutuhan daya tidak melebihi power budget switch PoE. Jika AP membutuhkan daya lebih besar daripada kemampuan port atau injector, perangkat dapat gagal menyala atau bekerja tidak stabil.
+
+#### 5. Kerapian dan keselamatan instalasi
+
+- gunakan kabel Cat6 atau kategori yang sesuai kebutuhan;
+- beri label pada kedua ujung kabel;
+- hindari tekukan tajam dan tarikan berlebihan;
+- pisahkan kabel data dari sumber listrik bertegangan tinggi jika memungkinkan;
+- gunakan cable tray atau pipa pelindung;
+- pastikan bracket dan baut kuat;
+- dokumentasikan lokasi AP, nomor port switch, VLAN, dan jalur kabel;
+- gunakan UPS untuk perangkat jaringan penting;
+- lakukan instalasi listrik dan ketinggian sesuai prosedur keselamatan kerja.
+
+#### 6. Pemeriksaan setelah pemasangan
+
+Setelah AP dipasang, lakukan verifikasi:
+
+1. Pastikan AP memperoleh daya dan alamat IP.
+2. Periksa status koneksi pada switch.
+3. Uji SSID, autentikasi, dan guest network.
+4. Uji koneksi pada 2,4 GHz dan 5 GHz.
+5. Ukur kekuatan sinyal di area layanan.
+6. Periksa throughput dan latency pada beberapa lokasi.
+7. Uji roaming dengan berpindah antar-ruangan.
+8. Pastikan VLAN dan aturan akses berjalan sesuai desain.
+9. Periksa log, interferensi, dan perangkat yang terhubung.
+10. Simpan hasil pengujian dan perbarui dokumentasi jaringan.
+
+Pemasangan selesai bukan ketika lampu AP menyala, melainkan ketika cakupan, kapasitas, keamanan, dan konektivitasnya telah diuji sesuai kebutuhan.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
