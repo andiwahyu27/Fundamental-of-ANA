@@ -19,7 +19,7 @@ Catatan pembelajaran pelatihan **Fundamental of Associate Network Administrator 
 | 1 | Merancang pengalamatan jaringan | ⏳ |
 | 2 | Mengidentifikasi sistem operasi yang berjalan di jaringan | ✅ |
 | 3 | Mengumpulkan informasi instalasi dan konfigurasi jaringan pada sistem operasi | ✅ |
-| 4 | Menentukan jumlah node/host jaringan berdasarkan kebutuhan pengguna | ⏳ |
+| 4 | Menentukan jumlah node/host jaringan berdasarkan kebutuhan pengguna | ✅ |
 | 5 | Menentukan perangkat jaringan yang sesuai | ⏳ |
 | 6 | Menentukan protokol jaringan | ⏳ |
 | 7 | Mengonfigurasi jaringan | ⏳ |
@@ -259,6 +259,89 @@ iface eth0 inet static
 | Metode pengalamatan | DHCP/Statis |
 | Hasil pengujian koneksi | - |
 
+
+### 5. Menentukan Jumlah Node/Host Jaringan
+
+Sebelum mengalokasikan alamat IP, tentukan terlebih dahulu kebutuhan riil jaringan. **Node** adalah setiap perangkat yang terhubung ke jaringan dan membutuhkan alamat IP, seperti:
+
+- komputer desktop;
+- laptop dan smartphone;
+- printer;
+- server;
+- router dan switch;
+- perangkat IoT.
+
+Perencanaan tidak hanya menghitung perangkat yang tersedia saat ini, tetapi juga memperkirakan pertumbuhan perangkat pada masa mendatang.
+
+#### Tahapan perencanaan
+
+1. **Inventarisasi perangkat saat ini**  
+   Lakukan audit terhadap seluruh perangkat yang akan terhubung. Catat jenis dan jumlah perangkat, misalnya PC, laptop, server, smartphone, printer, dan perangkat IoT.
+
+2. **Proyeksi pertumbuhan**  
+   Perkirakan pertumbuhan jumlah perangkat untuk jangka waktu tertentu, misalnya 1–3 tahun. Sediakan margin keamanan sekitar **20–30%** dari kebutuhan saat ini dan proyeksi masa depan untuk mengantisipasi perangkat tambahan atau perluasan jaringan.
+
+3. **Identifikasi kebutuhan khusus**  
+   Pisahkan perangkat yang membutuhkan alamat IP statis, seperti server, router, switch terkelola, printer jaringan, access point, dan perangkat lain yang harus mudah diakses.
+
+#### Contoh perhitungan
+
+Misalnya sebuah jaringan memiliki:
+
+| Jenis perangkat | Jumlah |
+|---|---:|
+| Komputer dan laptop | 40 |
+| Printer jaringan | 4 |
+| Server | 3 |
+| Perangkat jaringan | 5 |
+| Perangkat IoT | 8 |
+| **Total saat ini** | **60** |
+
+Jika digunakan margin keamanan 25%:
+
+```text
+Cadangan = 25% x 60 = 15 node
+Kebutuhan minimum = 60 + 15 = 75 alamat IP
+```
+
+Jaringan sebaiknya dirancang untuk menampung sedikitnya **75 host**.
+
+#### Hubungan dengan subnetting
+
+Setelah jumlah node diketahui, pilih skema pengalamatan yang sesuai. Pada IPv4, kebutuhan host dapat dipenuhi dengan memilih prefix subnet yang tepat.
+
+Rumus jumlah host yang dapat digunakan:
+
+```text
+Jumlah host usable = 2^h - 2
+```
+
+Keterangan:
+
+- `h` adalah jumlah bit host.
+- Pengurangan 2 digunakan untuk alamat network dan broadcast.
+
+Contoh:
+
+| Prefix | Total alamat | Host usable |
+|---|---:|---:|
+| /30 | 4 | 2 |
+| /29 | 8 | 6 |
+| /28 | 16 | 14 |
+| /27 | 32 | 30 |
+| /26 | 64 | 62 |
+| /25 | 128 | 126 |
+| /24 | 256 | 254 |
+
+Untuk kebutuhan 75 host, subnet **/25** menyediakan 126 host usable sehingga masih memiliki ruang pertumbuhan.
+
+Subnetting membantu:
+
+- mengoptimalkan penggunaan alamat IP;
+- membagi jaringan menjadi segmen yang lebih terkelola;
+- meningkatkan keamanan melalui pemisahan segmen;
+- mengurangi broadcast yang tidak diperlukan;
+- meningkatkan kinerja jaringan.
 
 ## Referensi
 
