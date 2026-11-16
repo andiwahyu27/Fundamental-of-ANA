@@ -605,6 +605,136 @@ VLAN 20 Tamu ────┘
 
 VLAN mengatur pemisahan jaringan di dalam kantor, sedangkan NAT menerjemahkan alamat ketika perangkat keluar menuju internet.
 
+### 8. Memberi Alamat Jaringan pada Node atau Perangkat
+
+Setelah subnet ditentukan, setiap perangkat perlu mendapatkan konfigurasi jaringan. Informasi yang biasanya diberikan kepada perangkat adalah:
+
+- IP address;
+- subnet mask atau prefix;
+- default gateway;
+- DNS server.
+
+Ada dua metode utama pengalamatan jaringan.
+
+#### Pengalamatan dinamis dengan DHCP
+
+**DHCP (Dynamic Host Configuration Protocol)** memberikan konfigurasi jaringan secara otomatis kepada perangkat.
+
+Alurnya:
+
+```text
+Perangkat terhubung
+        |
+        v
+Meminta konfigurasi DHCP
+        |
+        v
+Server DHCP memberikan IP, netmask, gateway, dan DNS
+```
+
+Contoh konfigurasi yang diterima laptop:
+
+```text
+IP address : 192.168.1.51
+Netmask    : 255.255.255.0 (/24)
+Gateway    : 192.168.1.1
+DNS        : 192.168.1.1 atau 8.8.8.8
+```
+
+Kelebihan DHCP:
+
+- konfigurasi otomatis;
+- mudah dikelola;
+- mengurangi kesalahan pengetikan;
+- mengurangi risiko konflik IP;
+- cocok untuk laptop, smartphone, dan perangkat pengguna yang sering berpindah jaringan.
+
+Server DHCP biasanya berada pada router, firewall, atau server khusus. Administrator menentukan **DHCP pool**, yaitu rentang alamat yang boleh dibagikan.
+
+#### Pengalamatan statis
+
+Pada pengalamatan statis, IP dikonfigurasi secara manual dan tidak berubah secara otomatis.
+
+Contoh konfigurasi server:
+
+```text
+IP address : 192.168.1.10
+Netmask    : 255.255.255.0 (/24)
+Gateway    : 192.168.1.1
+DNS        : 192.168.1.1
+```
+
+IP statis cocok untuk perangkat yang harus selalu ditemukan pada alamat yang sama, seperti:
+
+- router dan switch terkelola;
+- server;
+- printer jaringan;
+- access point;
+- kamera IP;
+- perangkat IoT tertentu.
+
+Kekurangannya, administrator harus mencatat dan mengatur alamat secara manual. Jika dua perangkat menggunakan alamat yang sama, akan terjadi konflik IP.
+
+#### Contoh pembagian alamat pada jaringan /24
+
+Misalnya jaringan kantor:
+
+```text
+Network : 192.168.1.0/24
+Range   : 192.168.1.1–192.168.1.254
+Gateway : 192.168.1.1
+Broadcast: 192.168.1.255
+```
+
+Pembagian alamat dapat dibuat seperti berikut:
+
+| Rentang | Peruntukan |
+|---|---|
+| 192.168.1.1 | Gateway/router |
+| 192.168.1.2–192.168.1.20 | Switch, access point, server |
+| 192.168.1.21–192.168.1.50 | Printer, kamera, dan perangkat statis |
+| 192.168.1.51–192.168.1.200 | DHCP untuk komputer dan perangkat pengguna |
+| 192.168.1.201–192.168.1.254 | Cadangan atau perangkat tambahan |
+
+Dengan pembagian ini, alamat statis tidak bercampur dengan pool DHCP.
+
+#### DHCP reservation
+
+Selain IP statis manual, administrator dapat menggunakan **DHCP reservation**. Pada metode ini, perangkat tetap memperoleh alamat melalui DHCP, tetapi server selalu memberikan IP yang sama berdasarkan MAC address perangkat.
+
+Contoh:
+
+```text
+MAC printer : AA:BB:CC:11:22:33
+IP reservation: 192.168.1.25
+```
+
+DHCP reservation menggabungkan kemudahan pengelolaan DHCP dengan alamat yang konsisten.
+
+#### Perbandingan DHCP dan IP statis
+
+| Aspek | DHCP | IP statis |
+|---|---|---|
+| Cara konfigurasi | Otomatis | Manual |
+| Perubahan alamat | Dapat berubah | Tetap |
+| Risiko salah konfigurasi | Lebih rendah | Lebih tinggi |
+| Cocok untuk | Laptop dan smartphone | Server, router, printer |
+| Dokumentasi | Pool dan lease | Setiap perangkat |
+| Pengelolaan | Terpusat | Perangkat per perangkat |
+
+#### Dokumentasi alokasi IP
+
+Setiap IP statis sebaiknya dicatat:
+
+| Nama perangkat | Jenis | IP address | Prefix | Gateway | Metode | Keterangan |
+|---|---|---|---|---|---|---|
+| R1 | Router | 192.168.1.1 | /24 | - | Statis | Gateway kantor |
+| SRV-01 | Server | 192.168.1.10 | /24 | 192.168.1.1 | Statis | Server aplikasi |
+| PRN-01 | Printer | 192.168.1.25 | /24 | 192.168.1.1 | Reservation | Printer lantai 1 |
+| PC-001 | Komputer | 192.168.1.51 | /24 | 192.168.1.1 | DHCP | Pengguna |
+
+> Jangan memberikan alamat network, broadcast, atau alamat yang sudah digunakan perangkat lain kepada host baru.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
