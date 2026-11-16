@@ -1862,6 +1862,179 @@ Gunakan daftar persyaratan teknis sebagai checklist wajib dan fokus pada angka s
 
 Keputusan akhir sebaiknya mempertimbangkan spesifikasi, keamanan, dukungan vendor, garansi, ketersediaan suku cadang, lisensi, biaya operasional, dan hasil pengujian. Perangkat terbaik adalah perangkat yang memenuhi kebutuhan teknis dan kebijakan organisasi dengan kapasitas cadangan yang masuk akal.
 
+### 22. Mengevaluasi Perangkat Jaringan
+
+Setelah membandingkan model dan harga, lakukan evaluasi mendalam terhadap kandidat sebelum pembelian.
+
+#### Proof of Concept dan rasio kinerja-biaya
+
+- **Proof of Concept (POC):** lakukan pengujian skala kecil pada lingkungan yang menyerupai produksi untuk memverifikasi klaim vendor.
+- **Price-Performance Ratio:** pilih perangkat yang memenuhi semua persyaratan teknis dengan biaya yang wajar, bukan sekadar perangkat termurah.
+- Perangkat yang hanya 10% lebih baik tetapi 50% lebih mahal dapat memiliki rasio yang buruk.
+- Perangkat yang gagal memenuhi persyaratan kritis harus dianggap sebagai risiko, meskipun harganya murah.
+
+#### Skalabilitas dan dukungan vendor
+
+Evaluasi:
+
+- **Headroom:** kapasitas cadangan untuk pertumbuhan. Jika trafik saat ini 5 Gbps, perangkat dengan batas 6 Gbps akan cepat menjadi usang; kapasitas 10 Gbps atau lebih memberikan ruang pertumbuhan.
+- **Modul ekspansi:** slot atau opsi penambahan port fiber dan uplink berkecepatan tinggi.
+- **Dukungan teknis:** kecepatan respons dan ketersediaan dukungan, misalnya 24/7.
+- **Garansi dan spare part:** masa garansi, ketersediaan unit pengganti, dan target waktu penggantian sesuai SLA.
+
+### 23. Menetapkan Perangkat Jaringan Sesuai Kebutuhan
+
+Setelah evaluasi selesai, pilih model perangkat final berdasarkan data pengujian, analisis biaya, dan persetujuan manajemen. Hasilnya adalah daftar spesifik perangkat keras yang akan dibeli.
+
+Keputusan final harus didukung tiga pertimbangan:
+
+1. **Data POC:** perangkat yang lulus pengujian dan memenuhi persyaratan kritis menjadi prioritas.
+2. **Total Cost of Ownership (TCO):** pertimbangkan harga beli, lisensi, dukungan tahunan, garansi, pemeliharaan, dan biaya penggantian selama 3–5 tahun.
+3. **Persyaratan organisasi:** perhatikan SLA vendor, waktu pengiriman unit pengganti, kompatibilitas dengan standar internal, dan kontinuitas bisnis.
+
+Perangkat yang sedikit lebih mahal dapat menjadi pilihan yang lebih baik jika menawarkan garansi lebih panjang, pembaruan gratis, dukungan lebih cepat, atau risiko operasional yang lebih rendah.
+
+### 24. Menetapkan Lisensi dan Keamanan Awal
+
+Sebelum perangkat tiba dan dipasang, siapkan seluruh lisensi software serta konfigurasi keamanan dasar.
+
+#### Persiapan lisensi
+
+Periksa kebutuhan:
+
+- lisensi fitur keamanan firewall, seperti IPS dan penyaringan malware;
+- lisensi AP controller, baik per AP maupun per pengguna;
+- lisensi sistem operasi server sesuai jumlah core atau pengguna;
+- lisensi cloud management, dukungan, dan pembaruan;
+- kunci aktivasi serta masa berlaku lisensi.
+
+Membeli perangkat tanpa lisensi yang sesuai seperti membeli mobil tanpa kunci: perangkat tersedia, tetapi tidak dapat digunakan secara maksimal.
+
+#### Initial security hardening
+
+Sebelum perangkat dihubungkan ke jaringan produksi:
+
+- ubah username atau password administrator default menjadi kredensial kuat dan unik;
+- batasi akses manajemen hanya dari IP atau jaringan administrator;
+- gunakan SSH dan HTTPS;
+- nonaktifkan Telnet, HTTP, FTP, atau layanan lain yang tidak diperlukan;
+- perbarui firmware bila diperlukan;
+- aktifkan pencatatan log dan sinkronisasi waktu;
+- backup konfigurasi awal yang aman.
+
+Perangkat baru tidak boleh dibiarkan terhubung ke jaringan sebelum langkah keamanan dasar selesai.
+
+### 25. Mengatur Instalasi agar Tidak Mengganggu Operasional
+
+Instalasi perangkat baru merupakan perubahan berisiko. Terapkan **Change Management** agar dampak terhadap pengguna dapat dikendalikan.
+
+Komponen pentingnya:
+
+- **Change window:** tentukan waktu di luar jam kerja, seperti malam hari atau akhir pekan.
+- **Rollback plan:** siapkan prosedur mengembalikan konfigurasi dan perangkat ke kondisi semula jika terjadi kegagalan.
+- **Notifikasi:** informasikan jadwal, layanan yang mungkin terganggu, durasi, dan kontak teknis kepada pihak terkait.
+- **Backup:** simpan konfigurasi perangkat lama dan kondisi awal sebelum perubahan.
+- **Validasi:** tetapkan kriteria keberhasilan dan pihak yang memberi persetujuan penutupan perubahan.
+
+### 26. Memasang Perangkat Keras Sesuai Prosedur
+
+Pemasangan fisik harus mengikuti standar teknis dan instruksi pabrikan.
+
+#### Pemasangan dan kabel
+
+- pasang perangkat pada rack server atau cabinet yang sesuai;
+- pastikan pendinginan dan sirkulasi udara memadai;
+- pastikan grounding terhubung dengan benar;
+- gunakan patch cord atau fiber optic yang telah diuji;
+- gunakan panjang kabel yang sesuai dari patch panel ke switch dan dari switch ke router;
+- beri label kabel dan port;
+- terapkan manajemen kabel yang rapi agar pemeliharaan lebih mudah.
+
+Setelah pemasangan, periksa kembali posisi perangkat, kekuatan baut, status daya, koneksi port, dan kerapian jalur kabel.
+
+### 27. Mengonfigurasi Instalasi Sesuai Kebutuhan Pengguna
+
+Konfigurasi perangkat baru harus mengikuti desain jaringan yang telah disetujui.
+
+#### Konfigurasi awal
+
+Terapkan:
+
+- IP address manajemen;
+- subnet mask atau prefix;
+- default gateway;
+- password administrator;
+- Network Time Protocol (NTP);
+- nama perangkat dan informasi lokasi.
+
+#### Konfigurasi fungsional
+
+Terapkan konfigurasi sesuai peran perangkat, misalnya:
+
+- VLAN tagging;
+- routing protocol;
+- firewall rules;
+- SSID dan keamanan Wi-Fi;
+- QoS;
+- pengaturan PoE;
+- port security;
+- VPN atau fitur keamanan lainnya.
+
+#### Integrasi
+
+Pastikan perangkat:
+
+- terhubung ke server DHCP dan DNS sesuai desain;
+- terdaftar pada sistem pemantauan jaringan atau NMS;
+- dapat mengirim log ke server yang ditentukan;
+- memiliki konfigurasi backup;
+- terintegrasi dengan perangkat jaringan yang sudah ada tanpa konflik alamat atau layanan.
+
+### 28. Menguji Instalasi untuk Memastikan Kebutuhan Terpenuhi
+
+Lakukan verifikasi fungsionalitas dan kinerja secara menyeluruh.
+
+#### Pengujian fungsional
+
+Periksa apakah:
+
+- fitur yang dikonfigurasi berjalan sesuai desain;
+- perangkat pada VLAN yang diizinkan dapat mengakses sumber daya tujuan;
+- firewall memblokir port dan trafik yang seharusnya diblokir;
+- DHCP, DNS, routing, SSID, dan PoE berfungsi;
+- akses pengguna dan tamu mengikuti kebijakan.
+
+#### Pengujian kinerja
+
+Gunakan bandwidth testing atau traffic generator untuk memastikan perangkat mampu menangani beban yang diharapkan tanpa kegagalan atau penurunan kinerja yang tidak dapat diterima.
+
+Ukur throughput, latency, packet loss, penggunaan CPU/memori, dan stabilitas pada beban normal maupun tinggi.
+
+#### Verifikasi pengguna akhir
+
+Lakukan pengujian langsung dari lokasi workstation pengguna. Pastikan masalah awal—misalnya sinyal Wi-Fi lemah, latency tinggi, akses lambat, atau koneksi terputus—telah teratasi.
+
+### 29. Membuat Dokumentasi Petunjuk Pengoperasian
+
+Dukungan pasca-instalasi membantu pengguna memanfaatkan perangkat baru dan membantu tim teknis memelihara sistem.
+
+Panduan harus sederhana, praktis, dan sesuai peran pengguna. Isi minimalnya:
+
+- **Panduan koneksi:** cara menyambungkan perangkat, memilih SSID baru, dan melakukan login VPN yang diperbarui.
+- **Prosedur pelaporan masalah:** kanal pelaporan, informasi yang harus disertakan, contoh screenshot, waktu kejadian, dan lokasi pengguna.
+- **FAQ:** daftar pertanyaan umum beserta solusi singkat.
+- **Batasan layanan:** layanan yang tersedia, jam dukungan, dan tindakan yang tidak boleh dilakukan pengguna.
+- **Kontak bantuan:** helpdesk, administrator, atau tim jaringan.
+
+### 30. Memberikan Instruksi Individu kepada Pengguna
+
+Sebagian pengguna memiliki peran atau kebutuhan khusus sehingga memerlukan pelatihan personal.
+
+- **Pelatihan khusus:** latih key user atau administrator sistem mengenai fitur baru, seperti penggunaan software video conference atau prosedur autentikasi baru.
+- **Hand-holding:** sediakan pendampingan langsung pada hari-hari awal implementasi, terutama bagi remote user atau departemen yang sangat bergantung pada perangkat baru.
+- Sesuaikan instruksi dengan tingkat kemampuan, perangkat, peran, dan skenario kerja pengguna.
+- Catat pertanyaan dan kendala yang berulang untuk memperbarui panduan, FAQ, atau materi pelatihan.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
