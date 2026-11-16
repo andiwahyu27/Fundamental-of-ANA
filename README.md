@@ -1209,6 +1209,95 @@ Contoh penerapan:
 
 Perangkat yang sedikit lebih mahal tetapi memiliki keamanan dan manajemen yang baik dapat memberikan nilai lebih besar daripada perangkat cepat yang tidak dapat dipantau atau dikendalikan.
 
+### 13. Memilih Perangkat Wi-Fi Berdasarkan Kebutuhan Teknis
+
+Pemilihan perangkat Wi-Fi tidak cukup berdasarkan klaim kecepatan tertinggi pada kotak produk. Perhatikan standar Wi-Fi, frekuensi, jumlah pengguna, fitur keamanan, kemampuan manajemen, dan kondisi lokasi pemasangan.
+
+#### 1. Standar Wi-Fi
+
+Pilih perangkat yang mendukung standar yang sesuai dengan kebutuhan. Contohnya:
+
+- **802.11ac atau Wi-Fi 5:** masih banyak digunakan dan umumnya bekerja pada frekuensi 5 GHz.
+- **802.11ax atau Wi-Fi 6:** lebih efisien pada lingkungan padat dan mampu melayani banyak perangkat dengan lebih baik.
+- **Wi-Fi 6E atau Wi-Fi 7:** dapat menawarkan kapasitas dan fitur yang lebih tinggi, tetapi perlu dipastikan perangkat klien serta anggaran juga mendukung.
+
+Standar terbaru tidak otomatis membuat semua perangkat lama menjadi lebih cepat. Kecepatan aktual dipengaruhi oleh kemampuan access point, perangkat klien, lebar kanal, jarak, interferensi, dan kualitas instalasi.
+
+#### 2. Frekuensi 2,4 GHz dan 5 GHz
+
+Perangkat dual-band dapat menggunakan dua pita frekuensi:
+
+| Frekuensi | Kelebihan | Kekurangan | Contoh penggunaan |
+|---|---|---|---|
+| 2,4 GHz | Jangkauan lebih luas dan lebih baik menembus hambatan | Lebih banyak interferensi dan kecepatan biasanya lebih rendah | Ruangan yang lebih jauh, perangkat IoT |
+| 5 GHz | Kecepatan lebih tinggi dan kanal lebih banyak | Jangkauan lebih pendek dan lebih mudah terhalang dinding | Laptop, video conference, transfer file |
+
+Pemilihan frekuensi dapat dianalogikan seperti memilih jalan. Frekuensi 2,4 GHz adalah jalan yang lebih jauh jangkauannya, tetapi lebih ramai. Frekuensi 5 GHz adalah jalan yang lebih cepat dan lebih lengang, tetapi memiliki jangkauan lebih terbatas.
+
+#### 3. Kapasitas pengguna dan MU-MIMO
+
+Hitung jumlah perangkat yang akan terhubung secara bersamaan, bukan hanya jumlah pegawai. Perhatikan:
+
+- jumlah klien aktif;
+- jenis aktivitas, seperti browsing, video conference, atau transfer file;
+- kapasitas radio access point;
+- jumlah access point dalam satu area;
+- kemungkinan pertumbuhan pengguna.
+
+Teknologi **MU-MIMO** memungkinkan access point berkomunikasi dengan beberapa perangkat secara bersamaan. Fitur ini membantu efisiensi pada lingkungan dengan banyak klien, tetapi kinerja tetap bergantung pada dukungan perangkat klien dan kondisi radio.
+
+#### 4. Keamanan Wi-Fi
+
+Untuk jaringan kantor, gunakan fitur keamanan modern:
+
+- **WPA3** jika didukung perangkat klien;
+- guest network untuk tamu;
+- pemisahan jaringan menggunakan VLAN;
+- kata sandi yang kuat dan berbeda dari kata sandi administrator;
+- pembaruan firmware;
+- autentikasi pengguna untuk lingkungan yang membutuhkan kontrol lebih ketat.
+
+Jangan menggunakan jaringan tamu yang berada pada segmen yang sama dengan server atau komputer pegawai tanpa aturan pembatasan akses.
+
+#### 5. Antena dan gain
+
+Pertimbangkan jenis antena dan nilai gain dalam dBi:
+
+- **Omnidirectional:** menyebarkan sinyal ke banyak arah dan umum digunakan di dalam ruangan.
+- **Directional:** memusatkan sinyal ke arah tertentu, cocok untuk menghubungkan area atau gedung tertentu.
+- **Sectoral:** mencakup sektor atau sudut tertentu dan sering digunakan pada area yang lebih luas.
+
+Antena dengan gain lebih tinggi tidak selalu lebih baik. Gain yang tinggi dapat membuat pola pancaran lebih sempit, sehingga harus disesuaikan dengan bentuk area dan posisi pemasangan.
+
+#### 6. Contoh pemilihan pada kantor
+
+Misalnya kantor memiliki 60 perangkat aktif yang tersebar di dua lantai:
+
+- gunakan beberapa access point, bukan satu AP dengan daya pancar maksimum;
+- pilih perangkat dual-band yang mendukung Wi-Fi 6;
+- gunakan 5 GHz untuk laptop dan video conference jika jangkauan memadai;
+- gunakan 2,4 GHz untuk perangkat yang jauh atau IoT;
+- aktifkan WPA3 atau WPA2-AES sesuai kompatibilitas klien;
+- sediakan guest network yang terpisah;
+- hubungkan AP ke switch Gigabit, dan gunakan PoE jika didukung;
+- lakukan survei sinyal setelah pemasangan untuk memeriksa area lemah dan interferensi.
+
+#### 7. Checklist pemilihan access point
+
+| Aspek | Pertanyaan pemeriksaan |
+|---|---|
+| Standar | Apakah mendukung Wi-Fi 6 atau standar yang sesuai kebutuhan? |
+| Frekuensi | Apakah dual-band dan memiliki pengaturan kanal yang baik? |
+| Kapasitas | Berapa jumlah klien aktif yang direkomendasikan? |
+| Performa | Apakah mendukung MU-MIMO dan efisiensi pada lingkungan padat? |
+| Keamanan | Apakah mendukung WPA3, guest network, dan VLAN? |
+| Koneksi | Apakah memiliki port Gigabit dan dukungan PoE? |
+| Manajemen | Apakah dapat dikelola melalui Web-GUI atau cloud? |
+| Antena | Apakah pola pancaran sesuai dengan bentuk ruangan? |
+| Pemeliharaan | Apakah firmware dan dukungan produsennya masih tersedia? |
+
+Perangkat yang tepat adalah perangkat yang sesuai dengan kondisi lokasi dan kebutuhan pengguna, bukan semata-mata perangkat dengan angka kecepatan paling besar.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
