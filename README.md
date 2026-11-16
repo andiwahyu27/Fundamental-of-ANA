@@ -975,6 +975,127 @@ Contoh rekomendasi:
 
 Pemilihan akhir tetap harus mempertimbangkan kompatibilitas, garansi, dukungan teknis, konsumsi daya, biaya pemeliharaan, serta anggaran.
 
+### 11. Menetapkan Kapasitas Jaringan Saat Ini dan Masa yang Akan Datang
+
+**Capacity planning** adalah proses menentukan seberapa besar kapasitas jaringan dan perangkat yang diperlukan agar layanan tetap berjalan baik saat ini maupun ketika jumlah pengguna dan perangkat bertambah.
+
+Analogi sederhananya: jaringan seperti sistem pipa air. Data adalah air, bandwidth adalah ukuran pipa, sedangkan perangkat jaringan adalah pompa dan pembagi jalurnya. Jika pipa terlalu kecil atau pompa tidak kuat, aliran akan tersendat saat banyak keran digunakan bersamaan.
+
+#### 1. Menghitung beban jaringan saat ini
+
+Jangan hanya menghitung jumlah pegawai. Jaringan melayani perangkat, sehingga satu orang dapat memiliki beberapa perangkat:
+
+- laptop atau komputer;
+- smartphone;
+- tablet;
+- printer;
+- kamera IP;
+- perangkat IoT.
+
+Contoh:
+
+```text
+50 pegawai x rata-rata 2–3 perangkat = 100–150 perangkat
+```
+
+Kelompokkan juga profil pengguna. Pengguna administrasi yang melakukan email dan pengolahan dokumen biasanya membutuhkan kapasitas berbeda dari pengguna multimedia yang mengunggah video berukuran besar atau melakukan konferensi video.
+
+#### 2. Mengantisipasi pertumbuhan
+
+Rencanakan kebutuhan untuk 3–5 tahun ke depan. Pertimbangkan:
+
+- pertambahan pegawai;
+- penambahan komputer dan perangkat IoT;
+- peningkatan penggunaan cloud dan video conference;
+- pertumbuhan ukuran file;
+- penambahan ruangan atau lantai.
+
+Gunakan cadangan kapasitas. Sebagai contoh, jika kebutuhan puncak saat ini adalah 500 Mbps dan disediakan buffer 50%:
+
+```text
+Kapasitas minimum = 500 Mbps + (50% x 500 Mbps)
+                  = 750 Mbps
+```
+
+Karena perangkat umumnya tersedia dalam kelas tertentu, pilih perangkat yang mendukung minimal 1 Gbps.
+
+> Angka pertumbuhan dan buffer adalah asumsi perencanaan. Untuk jaringan produksi, validasi dengan data monitoring, survei trafik, dan kebutuhan organisasi.
+
+#### 3. Menentukan perangkat dan kapasitasnya
+
+| Perangkat | Kapasitas yang diperhatikan | Contoh pertimbangan |
+|---|---|---|
+| Switch | Jumlah port, kecepatan, PoE, uplink, VLAN | 24 atau 48 port Gigabit |
+| Router/firewall | Throughput, jumlah koneksi, NAT, VPN, fitur keamanan | Mampu menangani bandwidth internet dan koneksi bersamaan |
+| Access Point | Jumlah klien, cakupan, kapasitas radio, standar Wi-Fi | Wi-Fi 6 untuk lingkungan dengan banyak perangkat |
+| Kabel jaringan | Kategori, panjang, kualitas instalasi | Cat6 untuk koneksi Gigabit |
+| UPS | Daya dan durasi cadangan | Melindungi router, switch, dan perangkat penting |
+| Rack | Ukuran, ventilasi, dan manajemen kabel | Rack 12U untuk perangkat jaringan kecil |
+
+#### 4. Contoh perhitungan kebutuhan switch
+
+Jika tersedia 15 komputer, jangan memilih switch 8 port. Gunakan switch minimal 24 port agar masih tersedia ruang untuk:
+
+- uplink;
+- access point;
+- printer;
+- kamera IP;
+- perangkat tambahan;
+- pertumbuhan pengguna.
+
+Contoh proyeksi:
+
+```text
+Perangkat saat ini       : 15
+Cadangan pertumbuhan 30% : 5 (dibulatkan ke atas)
+Kebutuhan perencanaan    : 20 port
+```
+
+Switch 24 port menjadi pilihan yang lebih sesuai. Jika kebutuhan sudah mencapai sekitar 26 port atau terdapat rencana ekspansi lebih besar, pertimbangkan switch 48 port.
+
+#### 5. Kecepatan perangkat
+
+Periksa kesesuaian kecepatan setiap komponen:
+
+- switch 100 Mbps dapat menjadi bottleneck untuk transfer file dan video;
+- switch Gigabit mendukung koneksi lokal hingga 1000 Mbps;
+- perangkat internal sebaiknya tetap mendukung Gigabit meskipun internet saat ini hanya 100 Mbps;
+- uplink antar-switch harus diperiksa agar tidak menjadi titik kemacetan.
+
+Kecepatan internet dan kecepatan jaringan lokal adalah hal yang berbeda. Koneksi internet 100 Mbps tidak berarti jaringan internal harus menggunakan switch 100 Mbps.
+
+#### 6. Jangkauan Wi-Fi dan topologi
+
+Jika terdapat area yang tidak terjangkau Wi-Fi, lakukan survei lokasi sebelum menambah Access Point. Perhatikan dinding, benda logam, interferensi, kepadatan pengguna, posisi AP, dan koneksi kabel menuju AP.
+
+Jika seluruh perangkat terhubung ke satu switch yang sudah penuh atau ruangan baru berada jauh dari switch utama, pertimbangkan:
+
+- menambahkan switch akses di ruangan tersebut;
+- menghubungkannya melalui uplink ke switch utama;
+- menata perangkat berdasarkan lantai, divisi, atau VLAN;
+- membuat diagram topologi dan label kabel.
+
+#### 7. Menyusun daftar rekomendasi
+
+Gunakan langkah berikut:
+
+1. Identifikasi jenis perangkat yang diperlukan.
+2. Tentukan jumlah dan spesifikasi minimumnya.
+3. Tentukan lokasi pemasangan.
+4. Jelaskan alasan teknis setiap perangkat.
+5. Periksa kompatibilitas, garansi, dukungan teknis, konsumsi daya, biaya pemeliharaan, dan anggaran.
+
+Contoh daftar kebutuhan:
+
+| No. | Perangkat | Spesifikasi/kapasitas | Jumlah | Lokasi |
+|---:|---|---|---:|---|
+| 1 | Switch | 24-port Gigabit, VLAN, uplink | 2 unit | Ruang server dan administrasi |
+| 2 | Router/firewall | Throughput sesuai bandwidth, NAT, VPN | 1 unit | Ruang server |
+| 3 | Access Point | Wi-Fi 6, mendukung banyak klien | 3 unit | Ruang rapat, pantry, ruang depan |
+| 4 | Kabel UTP | Cat6 | ±500 meter | Seluruh area kantor |
+| 5 | Rack | 12U, ventilasi dan manajemen kabel | 1 unit | Ruang server |
+| 6 | UPS | 1500 VA atau sesuai hasil perhitungan beban | 1 unit | Ruang server |
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
