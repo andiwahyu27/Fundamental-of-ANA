@@ -2470,7 +2470,374 @@ Artinya Router A mempelajari jaringan 192.168.2.0/24 melalui Router B pada alama
 
 Untuk pembelajaran, RIP baik digunakan sebagai pengantar konsep routing dinamis. OSPF lebih baik digunakan untuk mengajarkan praktik yang mendekati jaringan perusahaan modern.
 
-### 47. Menangani Request Timed Out pada Default Routing\n\nPada pengujian koneksi, pesan **Request Timed Out** berarti perangkat belum menerima balasan sampai batas waktu yang ditentukan. Dalam materi ini, RTO dimaksudkan sebagai **Request Timed Out**, bukan Recovery Time Objective.\n\nRequest Timed Out tidak selalu berarti default route salah. Penyebabnya dapat berasal dari perangkat pengguna, gateway, router berikutnya, firewall, koneksi fisik, atau server tujuan yang memang tidak membalas ping.\n\n#### Cara berpikir saat melakukan troubleshooting\n\nJangan langsung memeriksa Internet. Periksa jalur dari yang paling dekat ke yang paling jauh:\n\n1. Perangkat pengguna.\n2. Default gateway.\n3. Interface router yang mengarah ke luar.\n4. Router next-hop.\n5. Jaringan atau server tujuan.\n\nJika tahap yang lebih dekat belum berhasil, tahap berikutnya belum perlu diperiksa.\n\n#### Langkah 1: Periksa konfigurasi perangkat pengguna\n\nPastikan perangkat memiliki:\n\n- IP address yang benar;\n- subnet mask atau prefix yang benar;\n- default gateway yang benar;\n- kabel atau koneksi Wi-Fi yang aktif.\n\nPada Windows:\n\n```text\nipconfig\nping 192.168.1.1\n```\n\nPada Linux atau macOS:\n\n```text\nip addr\nip route\nping 192.168.1.1\n```\n\nJika perangkat tidak dapat melakukan ping ke gateway, masalah kemungkinan masih berada di LAN. Periksa IP address, subnet mask, VLAN, port switch, kabel, dan interface router.\n\n#### Langkah 2: Periksa default route pada router\n\nGunakan perintah:\n\n```text\nshow ip route\n```\n\nCari baris yang menunjukkan default route, misalnya:\n\n```text\nS* 0.0.0.0/0 [1/0] via 10.0.0.2\n```\n\nArtinya router akan meneruskan paket untuk jaringan yang tidak dikenal ke alamat 10.0.0.2.\n\nJika baris tersebut tidak ada, buat default route sesuai desain jaringan:\n\n```text\nRouter(config)# ip route 0.0.0.0 0.0.0.0 10.0.0.2\n```\n\nJangan menyalin alamat 10.0.0.2 tanpa memastikan bahwa alamat tersebut memang IP router tetangga yang terhubung langsung.\n\n#### Apa yang dimaksud router next-hop?\n\n**Next-hop** adalah router berikutnya yang menjadi tujuan paket setelah router saat ini.\n\nAnalogi sederhananya adalah perjalanan menggunakan kendaraan. Router saat ini adalah persimpangan tempat kita berada. Next-hop adalah persimpangan berikutnya yang harus dituju agar perjalanan dapat dilanjutkan.\n\nContoh:\n\n```text\nLAN ── Router A ── Router B ── ISP/Internet\n             10.0.0.1  10.0.0.2\n```\n\nPada Router A, Router B dengan IP 10.0.0.2 adalah next-hop. Maka default route pada Router A dapat ditulis:\n\n```text\nRouterA(config)# ip route 0.0.0.0 0.0.0.0 10.0.0.2\n```\n\nRouter A tidak langsung mengetahui semua jaringan di Internet. Router A hanya perlu menyerahkan paket kepada Router B. Selanjutnya Router B atau router lain meneruskan paket tersebut.\n\n#### Masalah yang sering terjadi pada next-hop\n\n1. **Alamat next-hop salah**\n\n   Contoh, Router A dikonfigurasi menuju 10.0.0.3, padahal Router B menggunakan 10.0.0.2. Paket akan diarahkan ke alamat yang salah.\n\n2. **Next-hop tidak satu jaringan dengan interface Router A**\n\n   Jika interface Router A menggunakan 10.0.0.1/30, pasangan yang benar biasanya 10.0.0.2. Alamat 10.0.1.2 berada pada jaringan yang berbeda dan tidak dapat dijangkau langsung melalui link tersebut.\n\n3. **Interface menuju next-hop masih shutdown**\n\n   Periksa dengan:\n\n   ```text\n   show ip interface brief\n   ```\n\n   Status idealnya adalah `up/up`. Jika administratively down, aktifkan interface:\n\n   ```text\n   Router(config)# interface Serial0/0/0\n   Router(config-if)# no shutdown\n   ```\n\n4. **Kabel atau link antar-router bermasalah**\n\n   Periksa kabel, port, modul, clock rate pada link serial jika diperlukan, serta status fisik interface.\n\n5. **Router A dapat mencapai Router B, tetapi Router B tidak memiliki rute lanjutan**\n\n   Router B mungkin menerima paket, tetapi tidak tahu ke mana paket harus diteruskan. Periksa tabel routing Router B dan konfigurasi default route atau rute menuju ISP.\n\n6. **Rute balik tidak tersedia**\n\n   Paket dapat pergi menuju tujuan, tetapi balasannya tidak memiliki jalan kembali ke LAN internal. Pastikan router tujuan atau ISP memiliki rute menuju jaringan internal, atau gunakan NAT jika desain jaringan mengharuskannya.\n\n#### Pengujian untuk menemukan titik kegagalan\n\nJalankan pengujian secara bertahap:\n\n```text\nPC       -> ping 192.168.1.1\nRouter A -> ping 10.0.0.2\nRouter A -> show ip route\nRouter A -> traceroute 8.8.8.8\nPC       -> ping 8.8.8.8\n```\n\nInterpretasi sederhana:\n\n| Hasil pengujian | Kemungkinan masalah |\n|---|---|\n| PC tidak dapat ping gateway | IP PC, VLAN, switch, kabel, atau interface LAN |\n| Router A tidak dapat ping next-hop | Link antar-router atau IP interface |\n| Next-hop dapat diping, tetapi Internet gagal | Default route lanjutan, NAT, firewall, ISP, atau rute balik |\n| Ping IP berhasil, nama domain gagal | DNS, bukan default routing utama |\n| Ping gagal tetapi layanan lain berjalan | Ping mungkin diblokir firewall |\n\n#### Tentang traceroute\n\nPerintah traceroute atau tracert menampilkan router-router yang dilewati paket.\n\n```text\nWindows : tracert 8.8.8.8\nLinux   : traceroute 8.8.8.8\n```\n\nJika jalur berhenti pada hop tertentu, titik tersebut menjadi petunjuk awal pemeriksaan. Namun, tanda `*` tidak selalu berarti router rusak; beberapa router sengaja tidak membalas paket traceroute.\n\n#### Checklist penanganan Request Timed Out\n\n- Pastikan perangkat pengguna memiliki IP yang benar.\n- Ping default gateway.\n- Periksa status interface dengan `show ip interface brief`.\n- Pastikan default route ada pada `show ip route`.\n- Pastikan alamat next-hop benar dan dapat dijangkau.\n- Ping next-hop dari router.\n- Periksa rute lanjutan pada router next-hop.\n- Periksa NAT, firewall, dan ACL.\n- Periksa apakah tujuan atau ISP memblokir ICMP.\n- Uji kembali dengan ping dan traceroute setelah perbaikan.\n\nKesimpulannya, **Request Timed Out adalah gejala, bukan langsung diagnosis**. Administrator harus mencari titik pertama di sepanjang jalur yang tidak dapat dilewati paket.\n\n### 48. Membuat Dokumentasi Konfigurasi Routing\n\nDokumentasi routing harus menjawab dua pertanyaan berbeda:\n\n1. **Perangkat ini memiliki alamat IP berapa?** Jawabannya dicatat dalam **tabel pengalamatan**.\n2. **Bagaimana paket menuju jaringan lain?** Jawabannya dicatat dalam **konfigurasi routing detail**.\n\n#### Perbedaan tabel pengalamatan dan konfigurasi routing detail\n\n| Aspek | Tabel Pengalamatan | Konfigurasi routing detail |\n|---|---|---|\n| Fokus | Identitas alamat perangkat/interface | Jalur yang dipilih router untuk meneruskan paket |\n| Pertanyaan | Perangkat ini memakai IP berapa? | Jika tujuan berada di jaringan lain, paket dikirim ke mana? |\n| Isi | Nama perangkat, interface, IP, subnet mask, gateway | Perintah interface, static route, OSPF/RIP, area, network, next-hop |\n| Contoh | Router-A Gi0/1 = 10.0.0.1/30 | `network 10.0.0.0 0.0.0.3 area 0` |\n\nTabel pengalamatan adalah seperti daftar alamat rumah. Konfigurasi routing adalah seperti petunjuk jalan menuju rumah tersebut. Daftar alamat saja belum memberi tahu cara mencapai rumah di wilayah lain.\n\n#### Contoh topologi dokumentasi\n\n```text\nLAN A: 192.168.10.0/24                         LAN B: 192.168.20.0/24\nPC-A/Laptop-A -- SW-A -- Router-A -- 10.0.0.0/30 -- Router-B -- SW-B -- PC-B/Laptop-B\n                         AP-A                              AP-B\n```\n\nPerangkat yang didokumentasikan:\n\n- Router-A dan Router-B.\n- SW-A dan SW-B.\n- AP-A dan AP-B.\n- PC-A dan Laptop-A pada LAN A.\n- PC-B dan Laptop-B pada LAN B.\n\n#### Contoh ringkasan alamat\n\n| Perangkat | Interface | IP address | Prefix | Gateway |\n|---|---|---|---|---|\n| Router-A | Gi0/0 | 192.168.10.1 | /24 | - |\n| Router-A | Gi0/1 | 10.0.0.1 | /30 | - |\n| Router-B | Gi0/0 | 192.168.20.1 | /24 | - |\n| Router-B | Gi0/1 | 10.0.0.2 | /30 | - |\n| SW-A | VLAN manajemen | 192.168.10.2 | /24 | 192.168.10.1 |\n| SW-B | VLAN manajemen | 192.168.20.2 | /24 | 192.168.20.1 |\n| AP-A | Manajemen | 192.168.10.3 | /24 | 192.168.10.1 |\n| AP-B | Manajemen | 192.168.20.3 | /24 | 192.168.20.1 |\n| PC-A | Ethernet | 192.168.10.10 | /24 | 192.168.10.1 |\n| Laptop-A | Wi-Fi | 192.168.10.11 | /24 | 192.168.10.1 |\n| PC-B | Ethernet | 192.168.20.10 | /24 | 192.168.20.1 |\n| Laptop-B | Wi-Fi | 192.168.20.11 | /24 | 192.168.20.1 |\n\n#### Contoh konfigurasi routing detail\n\nPada Router-A:\n\n```text\nrouter ospf 1\n router-id 1.1.1.1\n network 192.168.10.0 0.0.0.255 area 0\n network 10.0.0.0 0.0.0.3 area 0\n```\n\nPada Router-B:\n\n```text\nrouter ospf 1\n router-id 2.2.2.2\n network 192.168.20.0 0.0.0.255 area 0\n network 10.0.0.0 0.0.0.3 area 0\n```\n\n#### Cara PC berkomunikasi\n\n- **PC-A ke Laptop-A:** tujuan masih satu jaringan 192.168.10.0/24, sehingga paket melewati SW-A dan tidak perlu melewati router.\n- **PC-A ke PC-B:** PC-A mengirim paket ke gateway 192.168.10.1. Router-A mencari rute menuju 192.168.20.0/24 dan meneruskan paket melalui link 10.0.0.0/30 ke Router-B. Router-B kemudian mengirim paket ke PC-B.\n- **PC-B ke Laptop-A:** prosesnya berlangsung sebaliknya melalui Router-B, link antar-router, lalu Router-A.\n- **PC ke Internet:** router menggunakan default route menuju next-hop ISP. Jika diperlukan, NAT dan firewall juga diproses.\n\n#### Pengujian yang perlu dicatat\n\n```text\nshow ip interface brief\nshow ip ospf neighbor\nshow ip route\nping 10.0.0.2\nping 192.168.20.10\ntraceroute 192.168.20.10\n```\n\nCatat hasil pengujian, waktu pelaksanaan, perangkat sumber, alamat tujuan, hasil ping, dan tindakan perbaikan jika gagal.\n\nTemplate lengkap berisi format kosong dan contoh pengisian tersedia pada dokumen **Dokumentasi_Konfigurasi_Routing_Contoh_2_Router_2_Switch.docx**.\n\n### 49. OSPF Auto-Cost Reference Bandwidth\n\nOSPF menggunakan **cost** untuk memilih jalur terbaik. Semakin kecil nilai cost, semakin disukai jalur tersebut.\n\n#### Rumus OSPF cost\n\n```text\nCost = Reference bandwidth / Bandwidth interface\n```\n\nBandwidth biasanya dihitung dalam Mbps. Pada Cisco, reference bandwidth bawaan OSPF adalah 100 Mbps.\n\nContoh dengan reference bandwidth 100 Mbps:\n\n| Jenis interface | Bandwidth | Perhitungan | Cost OSPF |\n|---|---:|---:|---:|\n| Fast Ethernet | 100 Mbps | 100 / 100 | 1 |\n| Gigabit Ethernet | 1000 Mbps | 100 / 1000 = 0,1 | 1 (dibulatkan/minimum) |\n| 10 Gigabit Ethernet | 10000 Mbps | 100 / 10000 = 0,01 | 1 (minimum) |\n\nMasalahnya, dengan nilai bawaan 100 Mbps, interface Fast Ethernet, Gigabit Ethernet, dan 10 Gigabit Ethernet dapat memiliki cost yang sama-sama terbaca 1. Akibatnya, OSPF sulit membedakan jalur yang kecepatannya berbeda.\n\n#### Mengubah reference bandwidth menjadi 1000 Mbps\n\nUntuk jaringan yang menggunakan Gigabit Ethernet, reference bandwidth dapat diubah menjadi 1000 Mbps:\n\n```text\nRouter# configure terminal\nRouter(config)# router ospf 1\nRouter(config-router)# auto-cost reference-bandwidth 1000\nRouter(config-router)# end\n```\n\nAngka `1000` berarti 1000 Mbps atau 1 Gbps. Setelah nilai ini diterapkan:\n\n| Jenis interface | Bandwidth | Perhitungan | Cost OSPF |\n|---|---:|---:|---:|\n| Fast Ethernet | 100 Mbps | 1000 / 100 | 10 |\n| Gigabit Ethernet | 1000 Mbps | 1000 / 1000 | 1 |\n| 10 Gigabit Ethernet | 10000 Mbps | 1000 / 10000 = 0,1 | 1 (minimum) |\n\nDengan reference bandwidth 1000 Mbps, Fast Ethernet memiliki cost 10 dan Gigabit Ethernet memiliki cost 1. Router lebih memilih jalur Gigabit karena cost-nya lebih kecil.\n\n#### Mengapa harus dikonfigurasi pada semua router?\n\nNilai reference bandwidth harus konsisten pada semua router dalam domain OSPF. Jika Router A menggunakan 1000 Mbps tetapi Router B masih menggunakan 100 Mbps, perhitungan cost dapat berbeda dan pemilihan jalur menjadi tidak konsisten.\n\nKonfigurasikan pada setiap router:\n\n```text\nRouterA(config)# router ospf 1\nRouterA(config-router)# auto-cost reference-bandwidth 1000\n\nRouterB(config)# router ospf 1\nRouterB(config-router)# auto-cost reference-bandwidth 1000\n```\n\nPerubahan reference bandwidth tidak membuat bandwidth interface menjadi lebih cepat. Perintah ini hanya mengubah skala perhitungan cost OSPF.\n\n#### Memeriksa cost dan bandwidth\n\n```text\nshow ip ospf interface GigabitEthernet0/0\nshow interfaces GigabitEthernet0/0\nshow ip route ospf\n```\n\nPada output `show ip ospf interface`, perhatikan informasi seperti bandwidth dan cost interface.\n\n#### Mengatur bandwidth interface secara administratif\n\nOSPF membaca nilai bandwidth interface untuk menghitung cost. Jika nilai bandwidth pada perangkat tidak sesuai dengan kapasitas link, administrator dapat mengaturnya secara manual:\n\n```text\nRouter(config)# interface GigabitEthernet0/0\nRouter(config-if)# bandwidth 1000000\n```\n\nNilai `1000000` berarti 1.000.000 kilobit per detik atau 1000 Mbps. Perintah `bandwidth` hanya memberi tahu protokol routing tentang kapasitas link secara administratif; perintah ini tidak mengubah kecepatan fisik interface.\n\n#### Mengatur cost secara manual\n\nJika administrator ingin memaksa OSPF menggunakan nilai tertentu, cost dapat diatur langsung pada interface:\n\n```text\nRouter(config)# interface GigabitEthernet0/0\nRouter(config-if)# ip ospf cost 10\n```\n\nCost manual biasanya digunakan ketika desain jaringan membutuhkan prioritas khusus. Jika cost manual diterapkan, nilai tersebut menjadi acuan interface dan mengesampingkan hasil perhitungan otomatis.\n\n#### Catatan untuk praktik\n\n- Gunakan reference bandwidth yang sama pada seluruh router OSPF.\n- Pilih nilai yang mampu membedakan kecepatan link yang digunakan jaringan.\n- Untuk lab Gigabit Ethernet, `1000` Mbps mudah dipahami sebagai contoh awal.\n- Pada jaringan dengan link 10G atau lebih cepat, pertimbangkan reference bandwidth yang lebih besar, misalnya `10000`.\n- Setelah mengubah cost, periksa kembali tabel routing dan jalur paket.\n- Cost lebih kecil berarti jalur lebih disukai, bukan berarti bandwidth benar-benar berubah.\n\n## Referensi
+### 47. Menangani Request Timed Out pada Default Routing
+
+Pada pengujian koneksi, pesan **Request Timed Out** berarti perangkat belum menerima balasan sampai batas waktu yang ditentukan. Dalam materi ini, RTO dimaksudkan sebagai **Request Timed Out**, bukan Recovery Time Objective.
+
+Request Timed Out tidak selalu berarti default route salah. Penyebabnya dapat berasal dari perangkat pengguna, gateway, router berikutnya, firewall, koneksi fisik, atau server tujuan yang memang tidak membalas ping.
+
+#### Cara berpikir saat melakukan troubleshooting
+
+Jangan langsung memeriksa Internet. Periksa jalur dari yang paling dekat ke yang paling jauh:
+
+1. Perangkat pengguna.
+2. Default gateway.
+3. Interface router yang mengarah ke luar.
+4. Router next-hop.
+5. Jaringan atau server tujuan.
+
+Jika tahap yang lebih dekat belum berhasil, tahap berikutnya belum perlu diperiksa.
+
+#### Langkah 1: Periksa konfigurasi perangkat pengguna
+
+Pastikan perangkat memiliki:
+
+- IP address yang benar;
+- subnet mask atau prefix yang benar;
+- default gateway yang benar;
+- kabel atau koneksi Wi-Fi yang aktif.
+
+Pada Windows:
+
+```text
+ipconfig
+ping 192.168.1.1
+```
+
+Pada Linux atau macOS:
+
+```text
+ip addr
+ip route
+ping 192.168.1.1
+```
+
+Jika perangkat tidak dapat melakukan ping ke gateway, masalah kemungkinan masih berada di LAN. Periksa IP address, subnet mask, VLAN, port switch, kabel, dan interface router.
+
+#### Langkah 2: Periksa default route pada router
+
+Gunakan perintah:
+
+```text
+show ip route
+```
+
+Cari baris yang menunjukkan default route, misalnya:
+
+```text
+S* 0.0.0.0/0 [1/0] via 10.0.0.2
+```
+
+Artinya router akan meneruskan paket untuk jaringan yang tidak dikenal ke alamat 10.0.0.2.
+
+Jika baris tersebut tidak ada, buat default route sesuai desain jaringan:
+
+```text
+Router(config)# ip route 0.0.0.0 0.0.0.0 10.0.0.2
+```
+
+Jangan menyalin alamat 10.0.0.2 tanpa memastikan bahwa alamat tersebut memang IP router tetangga yang terhubung langsung.
+
+#### Apa yang dimaksud router next-hop?
+
+**Next-hop** adalah router berikutnya yang menjadi tujuan paket setelah router saat ini.
+
+Analogi sederhananya adalah perjalanan menggunakan kendaraan. Router saat ini adalah persimpangan tempat kita berada. Next-hop adalah persimpangan berikutnya yang harus dituju agar perjalanan dapat dilanjutkan.
+
+Contoh:
+
+```text
+LAN ── Router A ── Router B ── ISP/Internet
+             10.0.0.1  10.0.0.2
+```
+
+Pada Router A, Router B dengan IP 10.0.0.2 adalah next-hop. Maka default route pada Router A dapat ditulis:
+
+```text
+RouterA(config)# ip route 0.0.0.0 0.0.0.0 10.0.0.2
+```
+
+Router A tidak langsung mengetahui semua jaringan di Internet. Router A hanya perlu menyerahkan paket kepada Router B. Selanjutnya Router B atau router lain meneruskan paket tersebut.
+
+#### Masalah yang sering terjadi pada next-hop
+
+1. **Alamat next-hop salah**
+
+   Contoh, Router A dikonfigurasi menuju 10.0.0.3, padahal Router B menggunakan 10.0.0.2. Paket akan diarahkan ke alamat yang salah.
+
+2. **Next-hop tidak satu jaringan dengan interface Router A**
+
+   Jika interface Router A menggunakan 10.0.0.1/30, pasangan yang benar biasanya 10.0.0.2. Alamat 10.0.1.2 berada pada jaringan yang berbeda dan tidak dapat dijangkau langsung melalui link tersebut.
+
+3. **Interface menuju next-hop masih shutdown**
+
+   Periksa dengan:
+
+   ```text
+   show ip interface brief
+   ```
+
+   Status idealnya adalah `up/up`. Jika administratively down, aktifkan interface:
+
+   ```text
+   Router(config)# interface Serial0/0/0
+   Router(config-if)# no shutdown
+   ```
+
+4. **Kabel atau link antar-router bermasalah**
+
+   Periksa kabel, port, modul, clock rate pada link serial jika diperlukan, serta status fisik interface.
+
+5. **Router A dapat mencapai Router B, tetapi Router B tidak memiliki rute lanjutan**
+
+   Router B mungkin menerima paket, tetapi tidak tahu ke mana paket harus diteruskan. Periksa tabel routing Router B dan konfigurasi default route atau rute menuju ISP.
+
+6. **Rute balik tidak tersedia**
+
+   Paket dapat pergi menuju tujuan, tetapi balasannya tidak memiliki jalan kembali ke LAN internal. Pastikan router tujuan atau ISP memiliki rute menuju jaringan internal, atau gunakan NAT jika desain jaringan mengharuskannya.
+
+#### Pengujian untuk menemukan titik kegagalan
+
+Jalankan pengujian secara bertahap:
+
+```text
+PC       -> ping 192.168.1.1
+Router A -> ping 10.0.0.2
+Router A -> show ip route
+Router A -> traceroute 8.8.8.8
+PC       -> ping 8.8.8.8
+```
+
+Interpretasi sederhana:
+
+| Hasil pengujian | Kemungkinan masalah |
+|---|---|
+| PC tidak dapat ping gateway | IP PC, VLAN, switch, kabel, atau interface LAN |
+| Router A tidak dapat ping next-hop | Link antar-router atau IP interface |
+| Next-hop dapat diping, tetapi Internet gagal | Default route lanjutan, NAT, firewall, ISP, atau rute balik |
+| Ping IP berhasil, nama domain gagal | DNS, bukan default routing utama |
+| Ping gagal tetapi layanan lain berjalan | Ping mungkin diblokir firewall |
+
+#### Tentang traceroute
+
+Perintah traceroute atau tracert menampilkan router-router yang dilewati paket.
+
+```text
+Windows : tracert 8.8.8.8
+Linux   : traceroute 8.8.8.8
+```
+
+Jika jalur berhenti pada hop tertentu, titik tersebut menjadi petunjuk awal pemeriksaan. Namun, tanda `*` tidak selalu berarti router rusak; beberapa router sengaja tidak membalas paket traceroute.
+
+#### Checklist penanganan Request Timed Out
+
+- Pastikan perangkat pengguna memiliki IP yang benar.
+- Ping default gateway.
+- Periksa status interface dengan `show ip interface brief`.
+- Pastikan default route ada pada `show ip route`.
+- Pastikan alamat next-hop benar dan dapat dijangkau.
+- Ping next-hop dari router.
+- Periksa rute lanjutan pada router next-hop.
+- Periksa NAT, firewall, dan ACL.
+- Periksa apakah tujuan atau ISP memblokir ICMP.
+- Uji kembali dengan ping dan traceroute setelah perbaikan.
+
+Kesimpulannya, **Request Timed Out adalah gejala, bukan langsung diagnosis**. Administrator harus mencari titik pertama di sepanjang jalur yang tidak dapat dilewati paket.
+
+### 48. Membuat Dokumentasi Konfigurasi Routing
+
+Dokumentasi routing harus menjawab dua pertanyaan berbeda:
+
+1. **Perangkat ini memiliki alamat IP berapa?** Jawabannya dicatat dalam **tabel pengalamatan**.
+2. **Bagaimana paket menuju jaringan lain?** Jawabannya dicatat dalam **konfigurasi routing detail**.
+
+#### Perbedaan tabel pengalamatan dan konfigurasi routing detail
+
+| Aspek | Tabel Pengalamatan | Konfigurasi routing detail |
+|---|---|---|
+| Fokus | Identitas alamat perangkat/interface | Jalur yang dipilih router untuk meneruskan paket |
+| Pertanyaan | Perangkat ini memakai IP berapa? | Jika tujuan berada di jaringan lain, paket dikirim ke mana? |
+| Isi | Nama perangkat, interface, IP, subnet mask, gateway | Perintah interface, static route, OSPF/RIP, area, network, next-hop |
+| Contoh | Router-A Gi0/1 = 10.0.0.1/30 | `network 10.0.0.0 0.0.0.3 area 0` |
+
+Tabel pengalamatan adalah seperti daftar alamat rumah. Konfigurasi routing adalah seperti petunjuk jalan menuju rumah tersebut. Daftar alamat saja belum memberi tahu cara mencapai rumah di wilayah lain.
+
+#### Contoh topologi dokumentasi
+
+```text
+LAN A: 192.168.10.0/24                         LAN B: 192.168.20.0/24
+PC-A/Laptop-A -- SW-A -- Router-A -- 10.0.0.0/30 -- Router-B -- SW-B -- PC-B/Laptop-B
+                         AP-A                              AP-B
+```
+
+Perangkat yang didokumentasikan:
+
+- Router-A dan Router-B.
+- SW-A dan SW-B.
+- AP-A dan AP-B.
+- PC-A dan Laptop-A pada LAN A.
+- PC-B dan Laptop-B pada LAN B.
+
+#### Contoh ringkasan alamat
+
+| Perangkat | Interface | IP address | Prefix | Gateway |
+|---|---|---|---|---|
+| Router-A | Gi0/0 | 192.168.10.1 | /24 | - |
+| Router-A | Gi0/1 | 10.0.0.1 | /30 | - |
+| Router-B | Gi0/0 | 192.168.20.1 | /24 | - |
+| Router-B | Gi0/1 | 10.0.0.2 | /30 | - |
+| SW-A | VLAN manajemen | 192.168.10.2 | /24 | 192.168.10.1 |
+| SW-B | VLAN manajemen | 192.168.20.2 | /24 | 192.168.20.1 |
+| AP-A | Manajemen | 192.168.10.3 | /24 | 192.168.10.1 |
+| AP-B | Manajemen | 192.168.20.3 | /24 | 192.168.20.1 |
+| PC-A | Ethernet | 192.168.10.10 | /24 | 192.168.10.1 |
+| Laptop-A | Wi-Fi | 192.168.10.11 | /24 | 192.168.10.1 |
+| PC-B | Ethernet | 192.168.20.10 | /24 | 192.168.20.1 |
+| Laptop-B | Wi-Fi | 192.168.20.11 | /24 | 192.168.20.1 |
+
+#### Contoh konfigurasi routing detail
+
+Pada Router-A:
+
+```text
+router ospf 1
+ router-id 1.1.1.1
+ network 192.168.10.0 0.0.0.255 area 0
+ network 10.0.0.0 0.0.0.3 area 0
+```
+
+Pada Router-B:
+
+```text
+router ospf 1
+ router-id 2.2.2.2
+ network 192.168.20.0 0.0.0.255 area 0
+ network 10.0.0.0 0.0.0.3 area 0
+```
+
+#### Cara PC berkomunikasi
+
+- **PC-A ke Laptop-A:** tujuan masih satu jaringan 192.168.10.0/24, sehingga paket melewati SW-A dan tidak perlu melewati router.
+- **PC-A ke PC-B:** PC-A mengirim paket ke gateway 192.168.10.1. Router-A mencari rute menuju 192.168.20.0/24 dan meneruskan paket melalui link 10.0.0.0/30 ke Router-B. Router-B kemudian mengirim paket ke PC-B.
+- **PC-B ke Laptop-A:** prosesnya berlangsung sebaliknya melalui Router-B, link antar-router, lalu Router-A.
+- **PC ke Internet:** router menggunakan default route menuju next-hop ISP. Jika diperlukan, NAT dan firewall juga diproses.
+
+#### Pengujian yang perlu dicatat
+
+```text
+show ip interface brief
+show ip ospf neighbor
+show ip route
+ping 10.0.0.2
+ping 192.168.20.10
+traceroute 192.168.20.10
+```
+
+Catat hasil pengujian, waktu pelaksanaan, perangkat sumber, alamat tujuan, hasil ping, dan tindakan perbaikan jika gagal.
+
+Template lengkap berisi format kosong dan contoh pengisian tersedia pada dokumen **Dokumentasi_Konfigurasi_Routing_Contoh_2_Router_2_Switch.docx**.
+
+### 49. OSPF Auto-Cost Reference Bandwidth
+
+OSPF menggunakan **cost** untuk memilih jalur terbaik. Semakin kecil nilai cost, semakin disukai jalur tersebut.
+
+#### Rumus OSPF cost
+
+```text
+Cost = Reference bandwidth / Bandwidth interface
+```
+
+Bandwidth biasanya dihitung dalam Mbps. Pada Cisco, reference bandwidth bawaan OSPF adalah 100 Mbps.
+
+Contoh dengan reference bandwidth 100 Mbps:
+
+| Jenis interface | Bandwidth | Perhitungan | Cost OSPF |
+|---|---:|---:|---:|
+| Fast Ethernet | 100 Mbps | 100 / 100 | 1 |
+| Gigabit Ethernet | 1000 Mbps | 100 / 1000 = 0,1 | 1 (dibulatkan/minimum) |
+| 10 Gigabit Ethernet | 10000 Mbps | 100 / 10000 = 0,01 | 1 (minimum) |
+
+Masalahnya, dengan nilai bawaan 100 Mbps, interface Fast Ethernet, Gigabit Ethernet, dan 10 Gigabit Ethernet dapat memiliki cost yang sama-sama terbaca 1. Akibatnya, OSPF sulit membedakan jalur yang kecepatannya berbeda.
+
+#### Mengubah reference bandwidth menjadi 1000 Mbps
+
+Untuk jaringan yang menggunakan Gigabit Ethernet, reference bandwidth dapat diubah menjadi 1000 Mbps:
+
+```text
+Router# configure terminal
+Router(config)# router ospf 1
+Router(config-router)# auto-cost reference-bandwidth 1000
+Router(config-router)# end
+```
+
+Angka `1000` berarti 1000 Mbps atau 1 Gbps. Setelah nilai ini diterapkan:
+
+| Jenis interface | Bandwidth | Perhitungan | Cost OSPF |
+|---|---:|---:|---:|
+| Fast Ethernet | 100 Mbps | 1000 / 100 | 10 |
+| Gigabit Ethernet | 1000 Mbps | 1000 / 1000 | 1 |
+| 10 Gigabit Ethernet | 10000 Mbps | 1000 / 10000 = 0,1 | 1 (minimum) |
+
+Dengan reference bandwidth 1000 Mbps, Fast Ethernet memiliki cost 10 dan Gigabit Ethernet memiliki cost 1. Router lebih memilih jalur Gigabit karena cost-nya lebih kecil.
+
+#### Mengapa harus dikonfigurasi pada semua router?
+
+Nilai reference bandwidth harus konsisten pada semua router dalam domain OSPF. Jika Router A menggunakan 1000 Mbps tetapi Router B masih menggunakan 100 Mbps, perhitungan cost dapat berbeda dan pemilihan jalur menjadi tidak konsisten.
+
+Konfigurasikan pada setiap router:
+
+```text
+RouterA(config)# router ospf 1
+RouterA(config-router)# auto-cost reference-bandwidth 1000
+
+RouterB(config)# router ospf 1
+RouterB(config-router)# auto-cost reference-bandwidth 1000
+```
+
+Perubahan reference bandwidth tidak membuat bandwidth interface menjadi lebih cepat. Perintah ini hanya mengubah skala perhitungan cost OSPF.
+
+#### Memeriksa cost dan bandwidth
+
+```text
+show ip ospf interface GigabitEthernet0/0
+show interfaces GigabitEthernet0/0
+show ip route ospf
+```
+
+Pada output `show ip ospf interface`, perhatikan informasi seperti bandwidth dan cost interface.
+
+#### Mengatur bandwidth interface secara administratif
+
+OSPF membaca nilai bandwidth interface untuk menghitung cost. Jika nilai bandwidth pada perangkat tidak sesuai dengan kapasitas link, administrator dapat mengaturnya secara manual:
+
+```text
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# bandwidth 1000000
+```
+
+Nilai `1000000` berarti 1.000.000 kilobit per detik atau 1000 Mbps. Perintah `bandwidth` hanya memberi tahu protokol routing tentang kapasitas link secara administratif; perintah ini tidak mengubah kecepatan fisik interface.
+
+#### Mengatur cost secara manual
+
+Jika administrator ingin memaksa OSPF menggunakan nilai tertentu, cost dapat diatur langsung pada interface:
+
+```text
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ip ospf cost 10
+```
+
+Cost manual biasanya digunakan ketika desain jaringan membutuhkan prioritas khusus. Jika cost manual diterapkan, nilai tersebut menjadi acuan interface dan mengesampingkan hasil perhitungan otomatis.
+
+#### Catatan untuk praktik
+
+- Gunakan reference bandwidth yang sama pada seluruh router OSPF.
+- Pilih nilai yang mampu membedakan kecepatan link yang digunakan jaringan.
+- Untuk lab Gigabit Ethernet, `1000` Mbps mudah dipahami sebagai contoh awal.
+- Pada jaringan dengan link 10G atau lebih cepat, pertimbangkan reference bandwidth yang lebih besar, misalnya `10000`.
+- Setelah mengubah cost, periksa kembali tabel routing dan jalur paket.
+- Cost lebih kecil berarti jalur lebih disukai, bukan berarti bandwidth benar-benar berubah.
+
+## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
 - Dokumentasi resmi Windows Networking.
