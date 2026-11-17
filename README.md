@@ -2340,6 +2340,136 @@ ping 192.168.2.1
 
 Catatan penting: pada Cisco IOS, perintah `network` pada RIP bukan sekadar menambahkan rute statis. Perintah tersebut mengaktifkan RIP pada interface yang cocok dan membuat jaringan yang terhubung langsung diumumkan ke router tetangga.
 
+### 46. Memahami OSPF secara Bertahap
+
+**OSPF (Open Shortest Path First)** adalah protokol routing dinamis. OSPF membantu router mempelajari jaringan yang berada di belakang router lain secara otomatis.
+
+#### Mengapa OSPF diperlukan?
+
+Tanpa protokol routing, administrator harus menulis rute statis satu per satu. Pada jaringan kecil hal ini masih mungkin, tetapi pada jaringan yang memiliki banyak router, pekerjaan menjadi sulit dan rawan kesalahan.
+
+Dengan OSPF:
+
+- router saling bertukar informasi jaringan;
+- router membangun gambaran topologi jaringan;
+- router menghitung jalur terbaik secara otomatis;
+- router dapat memilih jalur alternatif ketika jalur utama bermasalah.
+
+#### Analogi sederhana
+
+Bayangkan beberapa kota yang dihubungkan oleh jalan.
+
+- **RIP** hanya menghitung jumlah kota yang dilewati.
+- **OSPF** membuat peta jalan dan mempertimbangkan kualitas atau biaya setiap jalan.
+
+Karena itu, OSPF biasanya lebih cepat dan lebih sesuai untuk jaringan menengah hingga besar.
+
+#### Contoh topologi
+
+```text
+LAN A                 Link antar-router                  LAN B
+192.168.1.0/24        10.0.0.0/30                       192.168.2.0/24
+PC ── Router A 10.0.0.1 ───────── Router B 10.0.0.2 ── PC
+```
+
+Keterangan:
+
+- 192.168.1.0/24 adalah jaringan LAN di belakang Router A.
+- 192.168.2.0/24 adalah jaringan LAN di belakang Router B.
+- 10.0.0.0/30 adalah jaringan khusus untuk hubungan langsung Router A dan Router B.
+- Alamat 10.0.0.1 dan 10.0.0.2 adalah IP interface router pada link tersebut.
+
+#### Mengapa ada perintah network?
+
+Perintah network memberi tahu OSPF interface atau jaringan mana yang harus diikutsertakan dalam proses OSPF.
+
+Pada Router A:
+
+```text
+RouterA(config)# router ospf 1
+RouterA(config-router)# network 192.168.1.0 0.0.0.255 area 0
+RouterA(config-router)# network 10.0.0.0 0.0.0.3 area 0
+```
+
+Pada Router B:
+
+```text
+RouterB(config)# router ospf 1
+RouterB(config-router)# network 192.168.2.0 0.0.0.255 area 0
+RouterB(config-router)# network 10.0.0.0 0.0.0.3 area 0
+```
+
+Setelah konfigurasi ini, Router A mengumumkan LAN A dan Router B mengumumkan LAN B. Keduanya bertukar informasi melalui jaringan 10.0.0.0/30.
+
+#### Memahami angka pada perintah OSPF
+
+Pada perintah router ospf 1, angka 1 adalah process ID lokal. Angka ini tidak wajib sama pada semua router, tetapi sering dibuat sama agar administrasi mudah.
+
+Pada perintah network 192.168.1.0 0.0.0.255 area 0:
+
+- 192.168.1.0 adalah pola jaringan yang dicocokkan.
+- 0.0.0.255 adalah wildcard mask.
+- area 0 adalah backbone area OSPF untuk praktik dasar.
+
+#### Mengapa menggunakan wildcard mask?
+
+Wildcard mask adalah kebalikan dari subnet mask dan berfungsi sebagai pola pencocokan.
+
+- Angka 0 berarti bagian IP harus sama.
+- Angka 255 berarti bagian IP boleh berbeda.
+
+Contoh:
+
+```text
+Subnet mask  : 255.255.255.0
+Wildcard mask:   0.0.0.255
+```
+
+Perintah network 192.168.1.0 0.0.0.255 area 0 mencocokkan alamat pada jaringan 192.168.1.x. Wildcard mask bukan alamat IP baru; ia hanya memberi tahu router bagian alamat mana yang harus dicocokkan.
+
+#### Urutan sederhana proses OSPF
+
+1. Interface router diberi IP address dan diaktifkan dengan no shutdown.
+2. OSPF diaktifkan menggunakan router ospf 1.
+3. Jaringan atau interface yang menjalankan OSPF ditentukan dengan perintah network.
+4. Router mencari router tetangga melalui link yang sama.
+5. Router bertukar informasi tentang jaringan yang diketahuinya.
+6. Router menghitung jalur terbaik dan memasukkannya ke tabel routing.
+
+#### Memeriksa hasil konfigurasi
+
+```text
+show ip ospf neighbor
+show ip route
+show ip protocols
+ping 192.168.2.1
+```
+
+- show ip ospf neighbor: melihat apakah router tetangga berhasil terbentuk.
+- show ip route: melihat rute yang dipelajari. Rute OSPF biasanya ditandai huruf O.
+- show ip protocols: melihat protokol routing yang aktif.
+- ping: menguji apakah jaringan tujuan dapat dicapai.
+
+Contoh rute OSPF:
+
+```text
+O 192.168.2.0/24 [110/2] via 10.0.0.2
+```
+
+Artinya Router A mempelajari jaringan 192.168.2.0/24 melalui Router B pada alamat 10.0.0.2.
+
+#### Perbandingan singkat RIP dan OSPF
+
+| Aspek | RIP | OSPF |
+|---|---|---|
+| Jenis | Distance-vector | Link-state |
+| Cara memilih jalur | Jumlah hop | Cost dan informasi link |
+| Kecepatan perubahan rute | Lebih lambat | Lebih cepat |
+| Skala penggunaan | Jaringan kecil/lab | Jaringan menengah/besar |
+| Kemudahan belajar | Lebih sederhana | Lebih kompleks, tetapi lebih kuat |
+
+Untuk pembelajaran, RIP baik digunakan sebagai pengantar konsep routing dinamis. OSPF lebih baik digunakan untuk mengajarkan praktik yang mendekati jaringan perusahaan modern.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
