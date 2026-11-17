@@ -2225,6 +2225,121 @@ Di dalam satu AS digunakan **Interior Gateway Protocol (IGP)** untuk bertukar in
 
 Intinya, **IGP mengatur routing di dalam satu organisasi/AS**, sedangkan **BGP digunakan untuk pertukaran routing antar-AS**. Untuk praktik dasar, RIP lebih mudah dipahami, sedangkan OSPF lebih sesuai untuk desain jaringan yang besar dan berkembang.
 
+### 42. Menentukan Akses Konfigurasi ke Perangkat Jaringan
+
+Metode akses router yang umum:
+
+- **Console:** akses langsung menggunakan kabel console. Cocok untuk konfigurasi awal ketika router belum memiliki IP.
+- **Telnet:** akses jarak jauh melalui jaringan, tetapi tidak aman karena data dan password tidak dienkripsi.
+- **SSH:** akses jarak jauh yang terenkripsi dan paling direkomendasikan.
+
+Pada perangkat Cisco, mode konfigurasi umumnya:
+
+```text
+Router> enable
+Router# configure terminal
+Router(config)#
+```
+
+- `enable` masuk ke privileged EXEC.
+- `configure terminal` masuk ke global configuration.
+- Mode global digunakan untuk mengubah konfigurasi router.
+
+### 43. Mengonfigurasi Interface pada Router
+
+Setiap interface router yang digunakan harus memiliki IP address dan subnet mask.
+
+Contoh:
+
+```text
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+Router(config-if)# no shutdown
+Router(config-if)# description Link to LAN A
+```
+
+Keterangan:
+
+- `interface GigabitEthernet0/0`: memilih port yang akan dikonfigurasi.
+- `ip address`: memberikan alamat IP dan subnet mask.
+- `no shutdown`: mengaktifkan interface yang sebelumnya nonaktif.
+- `description`: memberi catatan fungsi atau tujuan koneksi.
+- `show ip interface brief`: memeriksa status dan alamat IP semua interface.
+
+### 44. Mengonfigurasi Hubungan Antar-Router
+
+Hubungan langsung antar-router disebut **link point-to-point**. Link ini biasanya menggunakan subnet `/30` karena hanya membutuhkan dua alamat host.
+
+Contoh:
+
+```text
+RouterA(config)# interface Serial0/0/0
+RouterA(config-if)# ip address 10.0.0.1 255.255.255.252
+RouterA(config-if)# no shutdown
+
+RouterB(config)# interface Serial0/0/0
+RouterB(config-if)# ip address 10.0.0.2 255.255.255.252
+RouterB(config-if)# no shutdown
+```
+
+Kedua IP berada dalam subnet `10.0.0.0/30`, sehingga Router A dan Router B dapat berkomunikasi langsung.
+
+### 45. Mengaktifkan Routing RIP dan Memahami Perintahnya
+
+RIP adalah protokol **distance-vector**. RIP memilih jalur berdasarkan jumlah router yang dilewati atau **hop count**.
+
+Contoh konfigurasi:
+
+```text
+Router(config)# router rip
+Router(config-router)# version 2
+Router(config-router)# network 192.168.1.0
+Router(config-router)# network 10.0.0.0
+Router(config-router)# no auto-summary
+```
+
+Arti setiap perintah:
+
+1. `router rip`  
+   Mengaktifkan proses routing RIP dan masuk ke mode konfigurasi RIP.
+
+2. `version 2`  
+   Menggunakan RIPv2. Versi ini mendukung subnet mask/VLSM dan mengirimkan informasi routing secara multicast.
+
+3. `network 192.168.1.0`  
+   Memberi tahu router bahwa interface yang berada pada jaringan `192.168.1.0` harus menjalankan RIP. Router juga akan mengumumkan jaringan tersebut kepada router tetangga.
+
+4. `network 10.0.0.0`  
+   Mengaktifkan RIP pada interface link antar-router yang berada di jaringan `10.0.0.0`. Perintah ini penting agar router dapat bertukar informasi routing melalui link tersebut.
+
+5. `no auto-summary`  
+   Mencegah RIP melakukan peringkasan jaringan berdasarkan kelas alamat lama. Perintah ini penting ketika menggunakan subnetting atau VLSM agar informasi subnet tetap tepat.
+
+Contoh sederhana:
+
+```text
+Router A:
+- LAN A: 192.168.1.1/24
+- Link ke Router B: 10.0.0.1/30
+
+Router B:
+- LAN B: 192.168.2.1/24
+- Link ke Router A: 10.0.0.2/30
+```
+
+Pada Router A, umumkan `192.168.1.0` dan `10.0.0.0`. Pada Router B, umumkan `192.168.2.0` dan `10.0.0.0`. Setelah itu, keduanya dapat saling bertukar informasi tentang jaringan LAN masing-masing.
+
+Perintah pemeriksaan:
+
+```text
+show ip route
+show ip protocols
+show ip rip database
+ping 192.168.2.1
+```
+
+Catatan penting: pada Cisco IOS, perintah `network` pada RIP bukan sekadar menambahkan rute statis. Perintah tersebut mengaktifkan RIP pada interface yang cocok dan membuat jaringan yang terhubung langsung diumumkan ke router tetangga.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
