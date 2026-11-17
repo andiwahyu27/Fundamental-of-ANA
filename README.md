@@ -2035,6 +2035,54 @@ Sebagian pengguna memiliki peran atau kebutuhan khusus sehingga memerlukan pelat
 - Sesuaikan instruksi dengan tingkat kemampuan, perangkat, peran, dan skenario kerja pengguna.
 - Catat pertanyaan dan kendala yang berulang untuk memperbarui panduan, FAQ, atau materi pelatihan.
 
+### 31. Menyesuaikan Kapasitas Jaringan berdasarkan Dokumentasi Kebutuhan Bisnis Saat Ini
+
+#### Analogi Sederhana Switch
+
+Switch dapat dianalogikan sebagai terminal listrik yang pintar. Jika terminal listrik membagi daya ke berbagai perangkat, switch membagi koneksi data ke komputer, printer, server, dan perangkat jaringan dalam satu kantor.
+
+Pemilihan kapasitas switch bukan berdasarkan perangkat yang paling mahal, melainkan yang paling sesuai dengan kebutuhan bisnis yang terdokumentasi.
+
+#### Membaca Dokumen Kebutuhan Bisnis
+
+Sebelum memilih perangkat, administrator jaringan perlu menganalisis:
+
+- **Jumlah karyawan dan perangkat:** 20 karyawan dengan masing-masing 1 PC dan 1 telepon IP membutuhkan minimal 40 port.
+- **Jenis aktivitas bisnis:** kantor yang hanya menggunakan email dan Excel membutuhkan kapasitas standar, sedangkan kantor editing video membutuhkan kapasitas transfer yang jauh lebih besar.
+- **Rencana operasional:** kantor yang beroperasi 24 jam membutuhkan switch dengan ketahanan dan redundansi yang lebih baik.
+
+#### Menghitung Kapasitas Switch
+
+Kapasitas switch dapat dilihat dari tiga aspek utama:
+
+1. **Kecepatan port**
+   - Fast Ethernet (10/100 Mbps) cocok untuk kebutuhan ringan.
+   - Gigabit Ethernet (1 Gbps) menjadi standar yang lebih sesuai untuk perkantoran modern agar antrean data dan lag dapat diminimalkan.
+
+2. **Jumlah port**
+   Switch umumnya tersedia dalam pilihan 8, 16, 24, atau 48 port. Gunakan rumus:
+
+   **Kebutuhan port = kebutuhan saat ini + 20% ruang pertumbuhan**
+
+   Jangan memilih jumlah port yang terlalu pas apabila terdapat rencana penambahan karyawan atau perangkat.
+
+3. **Kapasitas backplane atau switching capacity**
+   Backplane adalah kemampuan total switch dalam memproses data dari seluruh port secara bersamaan. Aktivitas dengan lalu lintas tinggi, seperti akses database pusat atau transfer file video, membutuhkan switching capacity yang lebih besar.
+
+#### Mengapa Dokumen Bisnis Penting?
+
+Dokumen bisnis membantu menghindari dua kesalahan:
+
+- **Over-spec:** membeli switch yang jauh lebih mahal daripada kebutuhan sehingga terjadi pemborosan.
+- **Under-spec:** membeli switch yang terlalu rendah kapasitasnya sehingga sering mengalami antrean, gangguan, atau hang.
+
+#### Langkah Menentukan Spesifikasi Switch
+
+1. Hitung jumlah port berdasarkan daftar inventaris perangkat.
+2. Identifikasi jenis file dan aktivitas yang paling sering dilakukan.
+3. Periksa anggaran serta rencana penambahan karyawan atau perangkat.
+4. Pilih switch dengan kecepatan dan jumlah port sedikit di atas kebutuhan saat ini.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
