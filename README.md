@@ -2173,6 +2173,17 @@ Pengujian dilakukan secara sistematis untuk memastikan switch bekerja sesuai spe
 - **Port Security:** perangkat yang tidak terdaftar harus ditolak atau menyebabkan port dinonaktifkan sesuai kebijakan.
 - **QoS:** lalu lintas VoIP atau suara harus memperoleh prioritas lebih tinggi dibandingkan unduhan biasa.
 
+### 40. Memastikan Switch Terhubung dengan Perangkat Jaringan Lain
+
+Setelah switch diuji secara individu, pastikan switch terintegrasi dengan router, server, dan switch lainnya.
+
+1. **Verifikasi koneksi uplink:** periksa bahwa uplink switch terhubung ke router atau core switch dengan kecepatan dan duplex yang benar. Pada perangkat Cisco, perintah `show interfaces status` dapat digunakan untuk melihat status port, kecepatan, dan duplex.
+2. **Uji komunikasi antar-switch:** jika terdapat beberapa switch, uji komunikasi perangkat yang berada pada switch berbeda. Paket harus dapat melewati koneksi antar-switch sesuai rancangan VLAN dan trunk.
+3. **Verifikasi default gateway:** dari perangkat yang terhubung ke switch, uji komunikasi ke default gateway. Keberhasilan pengujian menunjukkan bahwa switch meneruskan lalu lintas menuju router atau perangkat Layer 3 dengan benar.
+4. **Uji akses layanan jaringan:** uji akses ke server file, DNS, dan web menggunakan alamat IP maupun nama domain.
+
+Catat setiap hasil pengujian, termasuk port yang bermasalah, kecepatan, duplex, hasil ping, akses layanan, dan tindakan perbaikan. Masalah harus diperbaiki dan didokumentasikan sebelum jaringan digunakan sepenuhnya.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
