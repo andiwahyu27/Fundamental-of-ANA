@@ -2083,6 +2083,96 @@ Dokumen bisnis membantu menghindari dua kesalahan:
 3. Periksa anggaran serta rencana penambahan karyawan atau perangkat.
 4. Pilih switch dengan kecepatan dan jumlah port sedikit di atas kebutuhan saat ini.
 
+### 32. Menetapkan Tipe dan Jumlah Switch
+
+Pemilihan switch harus disesuaikan dengan kebutuhan jaringan agar tidak kekurangan kapasitas maupun memboroskan anggaran.
+
+- **Unmanaged switch:** bersifat plug-and-play dan cocok untuk jaringan kecil atau tambahan port sederhana, tetapi tidak menyediakan fitur pemantauan dan konfigurasi.
+- **Managed switch:** dapat dikonfigurasi dan dipantau, mendukung VLAN, keamanan port, serta pengelolaan lalu lintas. Cocok untuk jaringan kantor dengan server atau banyak pengguna.
+- **Layer 2:** meneruskan data berdasarkan alamat MAC dalam satu segmen jaringan.
+- **Layer 3:** memiliki kemampuan routing dan umumnya digunakan sebagai core switch.
+- Hitung jumlah perangkat, perhatikan jarak fisik, sisakan sekitar 20% port untuk pertumbuhan, dan pilih PoE jika perangkat seperti access point atau CCTV membutuhkan daya melalui kabel LAN.
+
+### 33. Memilih Switch dengan Fitur yang Sesuai
+
+Fitur utama yang perlu dipertimbangkan:
+
+- **VLAN:** membagi satu switch fisik menjadi beberapa jaringan logis untuk memisahkan, misalnya, jaringan tamu, HR, dan CCTV.
+- **PoE:** mengirimkan data dan daya listrik melalui satu kabel UTP untuk access point, IP phone, atau CCTV.
+- **Stacking:** menggabungkan beberapa switch agar dapat dikelola seperti satu perangkat.
+- **Port Security:** membatasi perangkat yang boleh terhubung berdasarkan MAC Address.
+- **QoS:** memprioritaskan lalu lintas penting seperti VoIP dan video conference.
+
+Pilih fitur berdasarkan kebutuhan nyata, bukan hanya berdasarkan harga atau banyaknya fitur pada brosur.
+
+### 34. Menyesuaikan Jumlah Port dengan Kebutuhan Jaringan
+
+Setiap perangkat berkabel membutuhkan satu port switch, termasuk:
+
+- Komputer dan laptop.
+- Printer jaringan.
+- Access point.
+- IP phone.
+- Kamera CCTV.
+- Server dan storage.
+
+Pilihan umum switch adalah 8, 16, 24, dan 48 port. Gunakan rumus:
+
+**Total port = jumlah perangkat saat ini + cadangan sekitar 20%**
+
+Contoh: jaringan cabang bank memiliki 5 PC teller, 2 PC admin, 1 printer, 2 access point, dan 1 mesin EDC. Totalnya 11 port. Dengan cadangan 20%, kebutuhan menjadi sekitar 13–14 port, sehingga switch 16 port adalah pilihan yang sesuai.
+
+### 35. Memasang Switch dan Perangkat Pendukung
+
+Pemasangan switch merupakan dasar jaringan yang rapi dan andal.
+
+1. Pasang switch pada rack server atau dinding sesuai model dan gunakan bracket yang tepat.
+2. Pastikan switch terpasang kuat dan aman.
+3. Sediakan ventilasi yang cukup untuk mencegah overheating.
+4. Gunakan kipas rack atau pastikan aliran udara ruang server memadai.
+5. Gunakan cable management arm atau organizer agar kabel rapi dan mudah dirawat.
+
+### 36. Membuat Hubungan Antarperangkat dengan Kabel Jaringan
+
+- **Kabel uplink:** menghubungkan switch ke router atau switch core. Port uplink biasanya memiliki kecepatan lebih tinggi, misalnya 10 Gbps.
+- **Kabel downlink:** menghubungkan switch ke komputer, printer, atau access point menggunakan kabel patch Ethernet yang sesuai, seperti Cat5e atau Cat6.
+- **Penamaan port:** beri label pada setiap kabel dan port berdasarkan diagram topologi agar koneksi mudah diidentifikasi dan didokumentasikan.
+
+### 37. Mengonfigurasi Switch Berdasarkan Kebutuhan Jaringan
+
+Konfigurasi dapat dilakukan melalui CLI atau antarmuka web.
+
+1. **Akses switch:** gunakan console port atau alamat IP default melalui Ethernet.
+2. **Manajemen dasar:** ubah hostname dan buat kata sandi administrator yang kuat.
+3. **Konfigurasi VLAN:** buat VLAN sesuai kebutuhan dan tetapkan port ke VLAN yang tepat.
+4. **Fitur tambahan:** aktifkan STP untuk mencegah loop, Port Security untuk membatasi perangkat, dan QoS untuk memprioritaskan lalu lintas penting.
+
+### 38. Menempatkan Switch di Area yang Aman
+
+Penempatan fisik yang tepat melindungi perangkat dan menjaga operasional tetap stabil.
+
+- **Keamanan fisik:** tempatkan switch di ruang terkunci atau area dengan akses terbatas.
+- **Suhu:** jaga suhu sesuai batas operasional produsen karena panas berlebih dapat memperpendek umur perangkat.
+- **Kelembaban:** kendalikan kelembaban untuk mencegah korosi komponen.
+- **Sumber listrik:** gunakan UPS untuk menyediakan daya cadangan, mencegah downtime, dan melindungi switch dari lonjakan tegangan.
+
+### 39. Menguji Perangkat Switch Berdasarkan Petunjuk Pengujian
+
+Pengujian dilakukan secara sistematis untuk memastikan switch bekerja sesuai spesifikasi dan konfigurasi.
+
+#### Pengujian Konektivitas Dasar Layer 2
+
+- Periksa LED setiap port untuk memastikan koneksi aktif.
+- Gunakan ping dari komputer ke gateway dan server lain.
+- Periksa tabel MAC Address melalui CLI atau GUI.
+- Gunakan port mirroring jika tersedia untuk analisis lalu lintas dan troubleshooting.
+
+#### Pengujian Fungsional Konfigurasi
+
+- **VLAN:** perangkat dalam VLAN yang sama harus dapat berkomunikasi, sedangkan komunikasi antar-VLAN hanya terjadi melalui router atau perangkat Layer 3.
+- **Port Security:** perangkat yang tidak terdaftar harus ditolak atau menyebabkan port dinonaktifkan sesuai kebijakan.
+- **QoS:** lalu lintas VoIP atau suara harus memperoleh prioritas lebih tinggi dibandingkan unduhan biasa.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
