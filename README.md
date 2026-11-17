@@ -2184,6 +2184,47 @@ Setelah switch diuji secara individu, pastikan switch terintegrasi dengan router
 
 Catat setiap hasil pengujian, termasuk port yang bermasalah, kecepatan, duplex, hasil ping, akses layanan, dan tindakan perbaikan. Masalah harus diperbaiki dan didokumentasikan sebelum jaringan digunakan sepenuhnya.
 
+### 41. Mengidentifikasi Konfigurasi Routing dalam Autonomous System
+
+**Autonomous System (AS)** adalah kumpulan jaringan atau router yang dikelola oleh satu organisasi dengan kebijakan routing yang sama. Contohnya adalah jaringan milik ISP, perusahaan besar, atau institusi pemerintah.
+
+Setiap AS memiliki identitas berupa **Autonomous System Number (ASN)**. ASN digunakan oleh **BGP** untuk mengenali dan bertukar informasi routing antar-AS di Internet.
+
+Analogi sederhananya:
+
+- **AS:** satu wilayah atau kompleks yang dikelola oleh satu pengelola.
+- **ASN:** nomor identitas kompleks tersebut.
+- **Router:** petugas yang menentukan arah perjalanan paket.
+- **Routing protocol:** aturan yang digunakan para petugas untuk memilih jalur.
+
+#### IGP dalam satu AS
+
+Di dalam satu AS digunakan **Interior Gateway Protocol (IGP)** untuk bertukar informasi routing antar-router. Dua jenis yang umum adalah:
+
+1. **Distance-Vector**
+   - Memilih jalur berdasarkan jumlah lompatan (*hop count*) atau metrik tertentu.
+   - Contoh: **RIP**.
+   - Sederhana dan cocok untuk jaringan kecil.
+   - Kekurangannya: konvergensi lebih lambat dan RIP memiliki batas maksimal 15 hop.
+
+2. **Link-State**
+   - Setiap router membangun peta topologi jaringan.
+   - Router bertukar informasi status link, lalu menghitung jalur terbaik menggunakan algoritma Shortest Path First, seperti Dijkstra.
+   - Contoh: **OSPF**.
+   - Lebih cepat beradaptasi, skalabel, dan cocok untuk jaringan besar serta kompleks.
+
+#### Perbandingan RIP dan OSPF
+
+| Aspek | RIP | OSPF |
+|---|---|---|
+| Jenis | Distance-vector | Link-state |
+| Dasar pemilihan jalur | Jumlah hop | Cost dan kondisi link |
+| Konvergensi | Relatif lambat | Lebih cepat |
+| Skalabilitas | Jaringan kecil | Jaringan menengah/besar |
+| Batasan utama | Maksimal 15 hop | Konfigurasi lebih kompleks |
+
+Intinya, **IGP mengatur routing di dalam satu organisasi/AS**, sedangkan **BGP digunakan untuk pertukaran routing antar-AS**. Untuk praktik dasar, RIP lebih mudah dipahami, sedangkan OSPF lebih sesuai untuk desain jaringan yang besar dan berkembang.
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
