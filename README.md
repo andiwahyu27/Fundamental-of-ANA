@@ -2837,6 +2837,170 @@ Cost manual biasanya digunakan ketika desain jaringan membutuhkan prioritas khus
 - Setelah mengubah cost, periksa kembali tabel routing dan jalur paket.
 - Cost lebih kecil berarti jalur lebih disukai, bukan berarti bandwidth benar-benar berubah.
 
+### 50. ACL Standard dan ACL Extended
+
+**ACL (Access Control List)** adalah daftar aturan pada router atau switch Layer 3 untuk menentukan lalu lintas mana yang boleh diteruskan (**permit**) dan mana yang ditolak (**deny**).
+
+Analogi sederhananya, ACL seperti petugas keamanan di pintu gedung:
+
+- petugas memeriksa siapa atau lalu lintas apa yang datang;
+- aturan menentukan siapa yang boleh masuk;
+- aturan lain dapat menolak akses;
+- ACL tidak mengubah alamat IP; ACL hanya mengatur izin lalu lintas.
+
+#### 1. ACL Standard
+
+ACL Standard hanya memeriksa **alamat IP sumber**. ACL ini cocok digunakan jika aturan hanya bergantung pada siapa pengirim lalu lintasnya.
+
+Rentang nomor ACL Standard adalah **1–99** dan **1300–1999**.
+
+Sintaks umum:
+
+```text
+access-list <nomor-list> permit|deny <network> <wildcard-mask>
+```
+
+Contoh mengizinkan jaringan HRD:
+
+```text
+Router(config)# access-list 10 permit 192.168.30.0 0.0.0.255
+```
+
+Keterangan:
+
+- `10` adalah nomor ACL Standard.
+- `192.168.30.0` adalah jaringan sumber.
+- `0.0.0.255` adalah wildcard mask untuk mencocokkan jaringan `192.168.30.x`.
+- `permit` berarti lalu lintas dari sumber tersebut diizinkan.
+
+ACL harus diterapkan pada interface agar mulai bekerja:
+
+```text
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ip access-group 10 in
+```
+
+`in` berarti ACL memeriksa paket yang **masuk** ke interface tersebut.
+
+#### 2. ACL Extended
+
+ACL Extended dapat memeriksa lebih banyak informasi:
+
+- alamat IP sumber;
+- alamat IP tujuan;
+- protokol seperti IP, TCP, UDP, atau ICMP;
+- nomor port layanan seperti HTTP 80 atau HTTPS 443.
+
+Rentang nomor ACL Extended adalah **100–199** dan **2000–2699**.
+
+Sintaks umum berdasarkan protokol:
+
+```text
+access-list <nomor-list> permit|deny <protocol> <network-asal> <wildcard-mask> <network-tujuan> <wildcard-mask>
+```
+
+Sintaks dengan port:
+
+```text
+access-list <nomor-list> permit|deny <protocol> <network-asal> <wildcard-mask> <network-tujuan> <wildcard-mask> <operator> <port>
+```
+
+Contoh menolak PC HRD `192.168.30.10` mengakses server `192.168.40.10`, tetapi mengizinkan lalu lintas lainnya:
+
+```text
+Router(config)# access-list 101 deny ip host 192.168.30.10 host 192.168.40.10
+Router(config)# access-list 101 permit ip any any
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ip access-group 101 in
+```
+
+Contoh menolak akses HTTP dari jaringan tamu ke server:
+
+```text
+Router(config)# access-list 102 deny tcp 192.168.50.0 0.0.0.255 host 192.168.40.10 eq 80
+Router(config)# access-list 102 permit ip any any
+```
+
+- `tcp`: protokol yang diperiksa.
+- `192.168.50.0 0.0.0.255`: sumber, yaitu jaringan tamu.
+- `host 192.168.40.10`: satu alamat server tujuan.
+- `eq 80`: port HTTP.
+- `permit ip any any`: mengizinkan lalu lintas lain yang tidak terkena aturan penolakan.
+
+#### 3. Perbedaan ACL Standard dan Extended
+
+| Aspek | ACL Standard | ACL Extended |
+|---|---|---|
+| Nomor umum | 1–99 dan 1300–1999 | 100–199 dan 2000–2699 |
+| Pemeriksaan | Umumnya IP sumber | Sumber, tujuan, protokol, dan port |
+| Tingkat pengaturan | Sederhana | Lebih rinci |
+| Contoh | Menolak seluruh jaringan tertentu | Menolak HTTP dari VLAN Tamu ke server tertentu |
+| Waktu penerapan | Umumnya dekat tujuan | Umumnya dekat sumber |
+
+#### 4. Hal penting tentang urutan ACL
+
+ACL diproses dari aturan paling atas ke bawah. Router berhenti pada aturan pertama yang cocok.
+
+Contoh:
+
+```text
+access-list 101 deny ip host 192.168.30.10 host 192.168.40.10
+access-list 101 permit ip any any
+```
+
+Artinya:
+
+1. Jika sumber dan tujuan cocok dengan baris pertama, paket ditolak.
+2. Jika tidak cocok, paket melewati baris kedua dan diizinkan.
+
+Pada akhir setiap ACL terdapat **implicit deny**, yaitu penolakan tersembunyi. Karena itu, jika lalu lintas lain tetap boleh berjalan, tambahkan:
+
+```text
+permit ip any any
+```
+
+#### 5. Perintah pemeriksaan dan penghapusan
+
+Melihat ACL:
+
+```text
+show access-lists
+show ip interface GigabitEthernet0/0
+```
+
+Menghapus ACL dari interface:
+
+```text
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# no ip access-group 101 in
+```
+
+Menghapus ACL bernomor:
+
+```text
+Router(config)# no access-list 101
+```
+
+#### 6. Hubungan ACL dengan NAT
+
+ACL dan NAT dapat sama-sama menggunakan perintah `access-list`, tetapi fungsinya berbeda.
+
+- **ACL keamanan:** menentukan lalu lintas yang boleh atau ditolak.
+- **ACL untuk NAT:** menentukan alamat private mana yang akan diterjemahkan.
+
+Contoh ACL untuk memilih jaringan yang akan di-NAT:
+
+```text
+Router(config)# access-list 1 permit 192.168.30.0 0.0.0.255
+Router(config)# ip nat inside source list 1 interface GigabitEthernet0/1 overload
+```
+
+Pada contoh tersebut, ACL nomor 1 bukan sedang memblokir akses. ACL itu hanya memilih jaringan `192.168.30.0/24` agar diterjemahkan oleh NAT.
+
+Kesimpulannya:
+
+> **ACL mengatur izin lalu lintas, sedangkan NAT mengubah alamat IP.**
+
 ## Referensi
 
 - Materi pelatihan pada LMS Digital Talent Scholarship/Komdigi.
